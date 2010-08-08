@@ -8,6 +8,7 @@ Simple = (function(s, win) {
       sandbox.
         add(S.Author).
         add(S.Slideshow).
+        add(S.KeyListener).
         init();
       Simple.app = sandbox;
       return sandbox;
@@ -37,6 +38,9 @@ Simple = (function(s, win) {
       this.archive = new S.Archive();
       self.forEach("init");
       $("a.toggle").bind("click", function() {
+        self.forEach("toggle");
+      });
+      this.bind("toggle.simple", function() {
         self.forEach("toggle");
       });
     },
@@ -114,6 +118,9 @@ Simple = (function(s, win) {
     },
     listen: function() {
       var self = this;
+      this.$selector.delegate("a.exit", "click", function() {
+        self.sandbox.trigger("stop.simple");
+      });
       self.sandbox.
         bind("play.simple", function() {
           self.play();
@@ -148,16 +155,12 @@ Simple = (function(s, win) {
     this.keys = [];
   };
   S.Archive[proto] = {
-    init: function() {},
     save: function(data) {
       log("Saving", data.key, data.val);
       return this.db[data.key] = data.val;
     },
     get: function(key) {
-      this.db[key];
-    },
-    length: function() {
-      this.db.length;
+      return this.db[key];
     },
     load: function(callback) {
       var slide = "slide",
@@ -171,6 +174,59 @@ Simple = (function(s, win) {
         markdown = this.db[slide + ++num];
       }
       return self.sandbox.trigger("loaded.simple");
+    }
+  };
+
+  S.KeyListener = function() {
+    this.EDIT = "edit";
+    this.SHOW = "show";
+    this.context = this.EDIT;
+  };
+  S.KeyListener[proto] = {
+    keys: {
+      space : 32,
+      left  : 37,
+      right : 39,
+      esc   : 27
+    },
+    init: function() {
+      var self = this,
+      keys = self.keys;
+      self.sandbox.
+        bind("play.simple", function() {
+          self.context = self.SHOW;
+        }).
+        bind("stop.simple", function() {
+          self.context = self.EDIT;
+        }).
+        bind("keydown", function(e) {
+          var key = e.keyCode;
+          switch (self.context) {
+            case self.EDIT:
+              log("keydown while editing");
+              break;
+            case self.SHOW:
+              switch (key) {
+                case keys.space:
+                  log("space");
+                  break;
+                case keys.left:
+                  log("left");
+                  break;
+                case keys.right:
+                  log("right");
+                  break;
+                case keys.esc:
+                  self.sandbox.trigger("stop.simple");
+                  self.sandbox.trigger("toggle.simple");
+                  break;
+                default:
+                  log(key);
+                  break;
+              }
+              break;
+          }
+        });
     }
   };
 
