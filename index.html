@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml" xml:lang="en" lang="en">
+  <head>
+    <title></title>
+    <link href="simple.css" rel="stylesheet" type="text/css" media="screen"></style>
+    <script src="http://www.google.com/jsapi"></script>
+    <script>
+      google.load("jquery", "1.4.2");
+    </script>
+  </head>
+  <body class="gradient">
+    <div id="author" class="container">
+      <div id="preview" class="frame">
+        <div id="slide1" class="slide card padding bg"></div>
+      </div>
+      <div id="editor" class="frame">
+        <textarea name="slide1" rows="8" cols="40" class="card padding"></textarea>
+      </div>
+      <div class="frame">
+        <a href="#" class="play toggle">Play</a>
+      </div>
+    </div>
+    <div id="slideshow">
+      <div id="screen">
+        
+      </div>
+      <div class="frame">
+        <a href="#" class="exit toggle">Exit</a>
+      </div>
+    </div>
+    <script type="text/javascript" charset="utf-8" src="simple.js"></script>
+    <script type="text/javascript" charset="utf-8">
+      google.setOnLoadCallback(Simple.generate);
+    </script>
+  </body>
+</html>
