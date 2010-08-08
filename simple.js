@@ -6,7 +6,6 @@ Simple = (function(s, win) {
       var author, slideshow, s;
       sandbox = new S.Sandbox();
       sandbox.
-        add(S.Archive).
         add(S.Author).
         add(S.Slideshow).
         init();
@@ -25,30 +24,42 @@ Simple = (function(s, win) {
 
   S.Sandbox = function() {
     this.modules = [];
-    this.add = function(klass) {
+  };
+  S.Sandbox[proto] = {
+    add: function(klass) {
       var module = new klass();
       module.sandbox = this;
       this.modules.push(module);
       return this;
-    };
-    this.init = function() {
+    },
+    init: function() {
       var self = this;
+      this.archive = new S.Archive();
       self.forEach("init");
       $("a.toggle").bind("click", function() {
         self.forEach("toggle");
       });
-    };
-    this.trigger = function(event, data) {
+    },
+    trigger: function(event, data) {
       return $(document).trigger(event, data);
-    };
-    this.bind = function(event, callback) {
+    },
+    bind: function(event, callback) {
       return $(document).bind(event, callback);
-    };
-    this.forEach = function(fn) {
+    },
+    forEach: function(fn) {
       $.map(this.modules, function(module) {
         if (typeof module[fn] == 'function') module[fn]();
       });
-    };
+    },
+    get: function(key) {
+      return this.archive.get(key);
+    },
+    save: function(data) {
+      return this.archive.save(data);
+    },
+    load: function(callback) {
+      return this.archive.load(callback);
+    }
   };
 
   S.Author = function(selector) {
@@ -58,8 +69,9 @@ Simple = (function(s, win) {
   };
   S.Author[proto] = {
     init: function() {
+      var val = this.sandbox.get("slide1") || "# Simple Slides";
       this.listen();
-      this.$selector.find('textarea').val("# Simple Slides").change();
+      this.$selector.find('textarea').val(val).change();
     },
     listen: function() {
       var self = this;
@@ -69,7 +81,7 @@ Simple = (function(s, win) {
               markdown = $this.val();
               slideId = $this.attr("name");
           $("#" + slideId).html(markup(markdown));
-          self.sandbox.trigger("save.simple", {
+          self.sandbox.save({
             key: slideId,
             val: markdown
           });
@@ -106,12 +118,6 @@ Simple = (function(s, win) {
         bind("play.simple", function() {
           self.play();
         }).
-        bind("loading.simple", function(e, data) {
-          $("<div></div>").
-            attr("id", "simple" + data.slideId).
-            html(markup(data.markdown)).
-            appendTo(self.$screen);
-        }).
         bind("loaded.simple", function(e, data) {
           self.show();
         });
@@ -126,8 +132,14 @@ Simple = (function(s, win) {
       return this.$selector.toggle();
     },
     play: function() {
-      this.$screen.empty();
-      this.sandbox.trigger("load.simple");
+      var self = this;
+      self.$screen.empty();
+      self.sandbox.load(function(data) {
+        $("<div></div>").
+          attr("id", "simple" + data.slideId).
+          html(markup(data.markdown)).
+          appendTo(self.$screen);
+      });
     }
   };
 
@@ -136,36 +148,29 @@ Simple = (function(s, win) {
     this.keys = [];
   };
   S.Archive[proto] = {
-    init: function() {
-      this.listen();
-    },
-    listen: function() {
-      var self = this;
-      self.sandbox.
-        bind("save.simple", function(e, data) {
-          self.save(data);
-        }).
-        bind("load.simple", function() {
-          self.load();
-        });
-    },
+    init: function() {},
     save: function(data) {
       log("Saving", data.key, data.val);
       return this.db[data.key] = data.val;
     },
-    load: function() {
+    get: function(key) {
+      this.db[key];
+    },
+    length: function() {
+      this.db.length;
+    },
+    load: function(callback) {
       var slide = "slide",
           num   = 1,
           markdown  = this.db[slide + num];
       while (markdown) {
-        self.sandbox.trigger("loading.simple", {
+        callback({
           slideId: slideId,
           markdown: markdown
         });
         markdown = this.db[slide + ++num];
       }
-      self.sandbox.trigger("loaded.simple");
-      return this.db[key];
+      return self.sandbox.trigger("loaded.simple");
     }
   };
 
