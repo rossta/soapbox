@@ -1,20 +1,21 @@
 body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,Tahoma,Verdana,serif;}
 .container{width:500px;margin:0 auto;}
-.bg {background-color:#ededed;}
-.gradient { background-color: #d8d8d8;}
+.bg{background-color:#ededed;}
+.gradient {background-color: #d8d8d8;}
 .card {
   height:300px;
   padding:5px;
 }
 .frame { padding:15px 15px 0; }
-.text_blue { color:#87AFD9; }
+.blue {color:#87AFD9; }
 textarea {
   width:460px;
   height:100%;
   border:none;
   background-color:#0D152C;
   color:#ececec;
-  font-size:1.2em;
+  font-size:0.9em;
+  font-family:Courier, monospace;
 }
 
 .slide {

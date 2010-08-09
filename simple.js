@@ -70,12 +70,14 @@ Simple = (function(s, win) {
     selector = selector || "#author";
     this.selector   = selector;
     this.$selector  = $(selector);
+    this.$preview   = this.$selector.find('#preview');
+    this.$textarea  = this.$selector.find('textarea');
   };
   S.Author[proto] = {
     init: function() {
       var val = this.sandbox.get("slide1") || "# Simple Slides";
       this.listen();
-      this.$selector.find('textarea').val(val).change();
+      this.$textarea.val(val).change();
     },
     listen: function() {
       var self = this;
@@ -92,6 +94,16 @@ Simple = (function(s, win) {
         }).
         delegate("a.play", "click", function() {
           self.sandbox.trigger("play.simple");
+        }).
+        delegate("a.new", "click", function() {
+          var slideId, $slide, split;
+          $slide = self.$preview.children().hide().last();
+          slideId = $slide.attr("id");
+          split = slideId.split("_");
+          split[1] = parseInt(split[1], 10) + 1;
+          slideId = split.join("_");
+          $slide.clone().attr("id", slideId).appendTo(self.$preview).show();
+          self.$textarea.attr("name", slideId).val("# New Slide").change();
         });
     },
     hide: function() {
