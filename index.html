@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml" xml:lang="en" lang="en">
   <head>
     <title></title>
-    <link href="simple.css" rel="stylesheet" type="text/css" media="screen"></style>
+    <link href="simple.css" rel="stylesheet" type="text/css" media="screen" />
     <script src="http://www.google.com/jsapi"></script>
     <script>
       google.load("jquery", "1.4.2");
@@ -10,15 +10,16 @@
   </head>
   <body class="gradient">
     <div id="author" class="container">
+      <div class="frame">
+        <a href="#" class="add" alt="Add slide" title="Add slide">Insert</a>
+        <a href="#" class="play toggle" alt="Play slideshow" title="Play slideshow">Play</a>
+        <a href="#" class="new" alt="New presentation" title="New presentation">New</a>
+      </div>
       <div id="preview" class="frame white">
         <div id="slide_1" class="slide card padding"></div>
       </div>
       <div id="editor" class="frame">
         <textarea name="slide_1" rows="8" cols="40" class="card padding blue"></textarea>
-      </div>
-      <div class="frame">
-        <a href="#" class="play toggle">Play</a>
-        <a href="#" class="new">New</a>
       </div>
     </div>
     <div id="slideshow" class="white">

@@ -63,6 +63,9 @@ Simple = (function(s, $, win) {
     },
     load: function(callback) {
       return this.archive.load(callback);
+    },
+    clear: function() {
+      return this.archive.clear();
     }
   };
 
@@ -72,10 +75,11 @@ Simple = (function(s, $, win) {
     this.$selector  = $(selector);
     this.$preview   = this.$selector.find('#preview');
     this.$textarea  = this.$selector.find('textarea');
+    this.SLIDE_1    = "# Soapboax\n\nSimply slides";
   };
   S.Author[proto] = {
     init: function() {
-      var val = this.sandbox.get("slide1") || "# Simple Slides";
+      var val = this.sandbox.get("slide1") || this.SLIDE_1;
       this.listen();
       this.$textarea.val(val).change();
     },
@@ -95,7 +99,7 @@ Simple = (function(s, $, win) {
         delegate("a.play", "click", function() {
           self.sandbox.trigger("play.simple");
         }).
-        delegate("a.new", "click", function() {
+        delegate("a.add", "click", function() {
           var slideId, $slide, split;
           $slide = self.$preview.children().hide().last();
           slideId = $slide.attr("id").replace(/\d+/, function(match) {
@@ -103,6 +107,12 @@ Simple = (function(s, $, win) {
           });
           $slide.clone().attr("id", slideId).appendTo(self.$preview).show();
           self.$textarea.attr("name", slideId).val("# New Slide").change();
+        }).
+        delegate("a.new", "click", function() {
+          var $slide1 = self.$preview.children().first().clone();
+          self.$preview.empty().append($slide1.show());
+          self.sandbox.clear();
+          self.$textarea.attr("name", $slide1.attr("id")).val(self.SLIDE_1).change();
         });
     },
     hide: function() {
@@ -206,6 +216,13 @@ Simple = (function(s, $, win) {
         markdown = this.db[slide + ++num];
       }
       return self.sandbox.trigger("loaded.simple");
+    },
+    clear: function() {
+      try {
+        this.db.clear();
+      } catch (e) {
+        this.db = {};
+      }
     }
   };
 
@@ -261,7 +278,7 @@ Simple = (function(s, $, win) {
         });
     }
   };
-  
+
   $.fn.cell = function() {
     return this.css({
       'display': 'table-cell',
