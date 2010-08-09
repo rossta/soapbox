@@ -20,7 +20,7 @@ Simple = (function(s, win) {
     }
   },
   markup = function(markdown) {
-    return markdown;
+    return throwdown(markdown).toHtml();
   };
 
   S.Sandbox = function() {
@@ -98,10 +98,9 @@ Simple = (function(s, win) {
         delegate("a.new", "click", function() {
           var slideId, $slide, split;
           $slide = self.$preview.children().hide().last();
-          slideId = $slide.attr("id");
-          split = slideId.split("_");
-          split[1] = parseInt(split[1], 10) + 1;
-          slideId = split.join("_");
+          slideId = $slide.attr("id").replace(/\d+/, function(match) {
+            return parseInt(match, 10) + 1;
+          });
           $slide.clone().attr("id", slideId).appendTo(self.$preview).show();
           self.$textarea.attr("name", slideId).val("# New Slide").change();
         });
@@ -139,6 +138,12 @@ Simple = (function(s, win) {
         }).
         bind("loaded.simple", function(e, data) {
           self.show();
+        }).
+        bind("next.simple", function() {
+          self.next();
+        }).
+        bind("prev.simple", function() {
+          self.prev();
         });
     },
     hide: function() {
@@ -157,8 +162,23 @@ Simple = (function(s, win) {
         $("<div></div>").
           attr("id", "simple" + data.slideId).
           html(markup(data.markdown)).
-          appendTo(self.$screen);
+          appendTo(self.$screen).hide();
       });
+      self.$screen.children().first().show();
+    },
+    next: function() {
+      var $next = this.$screen.children(":visible").hide().next();
+      if ($next.length) $next.show();
+      else {
+        self.sandbox.trigger("stop.simple").trigger("toggle.simple");
+      }
+    },
+    prev: function() {
+      var $prev = this.$screen.children(":visible").hide().prev();
+      if ($prev.length) $prev.show();
+      else {
+        self.sandbox.trigger("stop.simple").trigger("toggle.simple");
+      }
     }
   };
 
@@ -175,7 +195,7 @@ Simple = (function(s, win) {
       return this.db[key];
     },
     load: function(callback) {
-      var slide = "slide",
+      var slide = "slide_",
           num   = 1,
           markdown  = this.db[slide + num];
       while (markdown) {
@@ -223,10 +243,10 @@ Simple = (function(s, win) {
                   log("space");
                   break;
                 case keys.left:
-                  log("left");
+                  self.sandbox.trigger("prev.simple");
                   break;
                 case keys.right:
-                  log("right");
+                  self.sandbox.trigger("next.simple");
                   break;
                 case keys.esc:
                   self.sandbox.trigger("stop.simple");
