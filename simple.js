@@ -1,4 +1,4 @@
-Simple = (function(s, win) {
+Simple = (function(s, $, win) {
   var S = s,
   proto = "prototype",
   methods = {
@@ -164,18 +164,18 @@ Simple = (function(s, win) {
           html(markup(data.markdown)).
           appendTo(self.$screen).hide();
       });
-      self.$screen.children().first().show();
+      self.$screen.children().addClass("slide").first().cell();
     },
     next: function() {
       var $next = this.$screen.children(":visible").hide().next();
-      if ($next.length) $next.show();
+      if ($next.length) $next.cell();
       else {
         self.sandbox.trigger("stop.simple").trigger("toggle.simple");
       }
     },
     prev: function() {
       var $prev = this.$screen.children(":visible").hide().prev();
-      if ($prev.length) $prev.show();
+      if ($prev.length) $prev.cell();
       else {
         self.sandbox.trigger("stop.simple").trigger("toggle.simple");
       }
@@ -261,6 +261,13 @@ Simple = (function(s, win) {
         });
     }
   };
+  
+  $.fn.cell = function() {
+    return this.css({
+      'display': 'table-cell',
+      'vertical-align': 'middle'
+    });
+  };
 
   return $.extend(S, methods);
-})({}, window);
+})({}, jQuery, window);

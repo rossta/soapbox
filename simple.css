@@ -6,7 +6,7 @@ body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,Tahoma,
   height:300px;
   padding:5px;
 }
-.frame { padding:15px 15px 0; }
+.frame { margin:15px 15px 0; }
 .blue {color:#87AFD9; }
 textarea {
   width:460px;
@@ -17,7 +17,35 @@ textarea {
   font-size:0.9em;
   font-family:Courier, monospace;
 }
-
 .slide {
   text-align:center;
+  display:table-cell;
+  vertical-align:middle;
+}
+.white {
+  background-color:white;
+}
+#preview {
+  display:table;
+  width:470px;
+}
+#slideshow, #screen {
+  left:0;
+  top:0;
+  width:100%;
+}
+#slideshow {
+  height:100%;
+  position:fixed;
+}
+#screen {
+  display:table;
+  height:100%;
+  background-color:none;
+  position:absolute;
+}
+#slideshow a.exit {
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
 }
