@@ -2,6 +2,8 @@ body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,Tahoma,
 .container{width:500px;margin:0 auto;}
 .bg{background-color:#ededed;}
 .gradient {background-color: #d8d8d8;}
+.left { float:left; }
+.no_margin { margin:0;}
 .card {
   height:300px;
   padding:5px;
