@@ -75,7 +75,7 @@ Simple = (function(s, $, win) {
     this.$selector  = $(selector);
     this.$preview   = this.$selector.find('#preview');
     this.$textarea  = this.$selector.find('textarea');
-    this.SLIDE_1    = "# Soapboax\n\nSimply slides";
+    this.SLIDE_1    = "# Simply slides";
   };
   S.Author[proto] = {
     init: function() {
@@ -96,6 +96,9 @@ Simple = (function(s, $, win) {
             val: markdown
           });
         }).
+        delegate("#preview", "click", function() {
+          $(this).next().find("textarea").focus();
+        }).
         delegate("a.play", "click", function() {
           self.sandbox.trigger("play.simple");
         }).
@@ -113,6 +116,9 @@ Simple = (function(s, $, win) {
           self.$preview.empty().append($slide1.show());
           self.sandbox.clear();
           self.$textarea.attr("name", $slide1.attr("id")).val(self.SLIDE_1).change();
+        }).
+        delegate("a.preview", "click", function() {
+          self.$preview.toggle();
         });
     },
     hide: function() {
@@ -194,7 +200,7 @@ Simple = (function(s, $, win) {
 
   S.Archive = function() {
     this.db = window.localStorage || {};
-    this.keys = [];
+    this.slides = [];
   };
   S.Archive[proto] = {
     save: function(data) {
@@ -225,6 +231,7 @@ Simple = (function(s, $, win) {
       }
     }
   };
+  S.Archive.connection = window.localStorage || {};
 
   S.KeyListener = function() {
     this.EDIT = "edit";
