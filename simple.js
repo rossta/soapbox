@@ -55,14 +55,14 @@ Simple = (function(s, $, win) {
         if (typeof module[fn] == 'function') module[fn]();
       });
     },
-    get: function(key) {
-      return this.archive.get(key);
+    get: function(id) {
+      return this.archive.get(id);
     },
-    save: function(data) {
-      return this.archive.save(data);
+    save: function(id, value) {
+      return this.archive.save(id, value);
     },
-    load: function(callback) {
-      return this.archive.load(callback);
+    all: function(callback) {
+      return this.archive.all(callback);
     },
     clear: function() {
       return this.archive.clear();
@@ -75,11 +75,12 @@ Simple = (function(s, $, win) {
     this.$selector  = $(selector);
     this.$preview   = this.$selector.find('#preview');
     this.$textarea  = this.$selector.find('textarea');
+    
     this.SLIDE_1    = "# Simply slides";
   };
   S.Author[proto] = {
     init: function() {
-      var val = this.sandbox.get("slide1") || this.SLIDE_1;
+      var val = this.sandbox.get(0) || this.SLIDE_1;
       this.listen();
       this.$textarea.val(val).change();
     },
@@ -91,10 +92,7 @@ Simple = (function(s, $, win) {
               markdown = $this.val();
               slideId = $this.attr("name");
           $("#" + slideId).html(markup(markdown));
-          self.sandbox.save({
-            key: slideId,
-            val: markdown
-          });
+          self.sandbox.save(slideId.split("_")[1], markdown);
         }).
         delegate("#preview", "click", function() {
           $(this).next().find("textarea").focus();
@@ -115,7 +113,7 @@ Simple = (function(s, $, win) {
           var $slide1 = self.$preview.children().first().clone();
           self.$preview.empty().append($slide1.show());
           self.sandbox.clear();
-          self.$textarea.attr("name", $slide1.attr("id")).val(self.SLIDE_1).change();
+          self.$textarea.attr("name", $slide1.attr("id")).val("## New Slide").change();
         }).
         delegate("a.preview", "click", function() {
           self.$preview.toggle();
@@ -174,7 +172,7 @@ Simple = (function(s, $, win) {
     play: function() {
       var self = this;
       self.$screen.empty();
-      self.sandbox.load(function(data) {
+      self.sandbox.all(function(data) {
         $("<div></div>").
           attr("id", "simple" + data.slideId).
           html(markup(data.markdown)).
@@ -199,35 +197,48 @@ Simple = (function(s, $, win) {
   };
 
   S.Archive = function() {
-    this.db = window.localStorage || {};
-    this.slides = [];
+    this.db = S.Archive.connection;
+    this.load("demo");
   };
   S.Archive[proto] = {
-    save: function(data) {
-      log("Saving", data.key, data.val);
-      return this.db[data.key] = data.val;
+    save: function(id, value) {
+      log("Saving", id, value);
+      this.slides[id] = value;
+      this.store();
     },
-    get: function(key) {
-      return this.db[key];
+    get: function(id) {
+      return this.slides[id];
     },
-    load: function(callback) {
-      var slide = "slide_",
-          num   = 1,
-          markdown  = this.db[slide + num];
+    all: function(callback) {
+      var num   = 0,
+          markdown  = this.slides[num];
       while (markdown) {
         callback({
           slideId: slideId,
           markdown: markdown
         });
-        markdown = this.db[slide + ++num];
+        markdown = this.slides[++num];
       }
       return self.sandbox.trigger("loaded.simple");
+    },
+    retrieve: function(key) {
+      var s = this.db[this.key];
+      if (s) return JSON.parse(s);
+      else return [];
+    },
+    store: function() {
+      this.db[this.key] = JSON.stringify(this.slides);
+      return this;
+    },
+    load: function(key) {
+      this.key = key;
+      this.slides = this.retrieve(this.key);
     },
     clear: function() {
       try {
         this.db.clear();
       } catch (e) {
-        this.db = {};
+        S.Archive.connection = window.localStorage || {};
       }
     }
   };
