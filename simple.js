@@ -55,6 +55,9 @@ Simple = (function(s, $, win) {
         if (typeof module[fn] == 'function') module[fn]();
       });
     },
+    load: function(key) {
+      return this.archive.load(key);
+    },
     get: function(id) {
       return this.archive.get(id);
     },
@@ -66,6 +69,9 @@ Simple = (function(s, $, win) {
     },
     clear: function() {
       return this.archive.clear();
+    },
+    slides: function() {
+      return this.archive.slides();
     }
   };
 
@@ -75,14 +81,13 @@ Simple = (function(s, $, win) {
     this.$selector  = $(selector);
     this.$preview   = this.$selector.find('#preview');
     this.$textarea  = this.$selector.find('textarea');
-    
-    this.SLIDE_1    = "# Simply slides";
+    this.$paginate  = this.$selector.find('#pagination');
   };
   S.Author[proto] = {
     init: function() {
-      var val = this.sandbox.get(0) || this.SLIDE_1;
       this.listen();
-      this.$textarea.val(val).change();
+      this.load();
+      this.display(0);
     },
     listen: function() {
       var self = this;
@@ -99,34 +104,57 @@ Simple = (function(s, $, win) {
         }).
         delegate("a.play", "click", function() {
           self.sandbox.trigger("play.simple");
+          return false;
         }).
-        delegate("a.add", "click", function() {
-          var slideId, $slide, split;
-          $slide = self.$preview.children().hide().last();
-          slideId = $slide.attr("id").replace(/\d+/, function(match) {
-            return parseInt(match, 10) + 1;
-          });
-          $slide.clone().attr("id", slideId).appendTo(self.$preview).show();
-          self.$textarea.attr("name", slideId).val("# New Slide").change();
+        delegate("a.insert", "click", function() {
+          self.insert(self.$preview.children().length, "# New Slide");
+          return false;
         }).
         delegate("a.new", "click", function() {
           var $slide1 = self.$preview.children().first().clone();
           self.$preview.empty().append($slide1.show());
-          self.sandbox.clear();
-          self.$textarea.attr("name", $slide1.attr("id")).val("## New Slide").change();
+          self.display($slide1.attr("id").split("_")[1], "# New Slideshow");
+          return false;
         }).
-        delegate("a.preview", "click", function() {
-          self.$preview.toggle();
+        delegate("#pagination a", "click", function() {
+          self.display(parseInt($(this).html(), 10) - 1);
+          return false;
         });
     },
     hide: function() {
-      this.$selector.hide();
+      return this.$selector.hide();
     },
     show: function() {
-      this.$selector.show();
+      return this.$selector.show();
+    },
+    display: function(index, value) {
+      var self = this, slideId = "slide_" + index;
+      value = value || self.sandbox.get(index);
+      $("div.slide").hide();
+      $("[id$=" + slideId +"]").show();
+      self.$textarea.attr("name", slideId).val(value);
+      self.$textarea.change();
+      return this;
+    },
+    insert: function(index, html) {
+      var self = this;
+      $("<div></div>").
+        attr("id", "slide_" + index).
+        attr("class", "slide card padding").
+        html(markup(html)).
+        appendTo(self.$preview).hide();
+      $("<a href='#'></a>").html(index + 1).appendTo(self.$paginate);
+      self.sandbox.save(index, html);
     },
     toggle: function() {
       return this.$selector.toggle();
+    },
+    load: function() {
+      var self = this;
+      self.sandbox.load("demo");
+      self.sandbox.all(function(data) {
+        self.insert(parseInt(data.num, 10), data.markdown);
+      });
     }
   };
 
@@ -198,7 +226,6 @@ Simple = (function(s, $, win) {
 
   S.Archive = function() {
     this.db = S.Archive.connection;
-    this.load("demo");
   };
   S.Archive[proto] = {
     save: function(id, value) {
@@ -210,11 +237,11 @@ Simple = (function(s, $, win) {
       return this.slides[id];
     },
     all: function(callback) {
-      var num   = 0,
-          markdown  = this.slides[num];
+      var num = 0,
+          markdown = this.slides[num];
       while (markdown) {
         callback({
-          slideId: slideId,
+          num: num,
           markdown: markdown
         });
         markdown = this.slides[++num];
@@ -224,7 +251,10 @@ Simple = (function(s, $, win) {
     retrieve: function(key) {
       var s = this.db[this.key];
       if (s) return JSON.parse(s);
-      else return [];
+      else return [
+      "# Simply slides", 
+      "# Using markdown"
+      ];
     },
     store: function() {
       this.db[this.key] = JSON.stringify(this.slides);
@@ -233,6 +263,10 @@ Simple = (function(s, $, win) {
     load: function(key) {
       this.key = key;
       this.slides = this.retrieve(this.key);
+      return this;
+    },
+    slides: function() {
+      return this.slides;
     },
     clear: function() {
       try {
