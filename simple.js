@@ -230,8 +230,8 @@ Simple = (function(s, $, w) {
     var t = this;
     t.sel   = sel;
     t.$sel  = $(sel);
-    t.$screen    = t.$sel.find(".screen");
-    t.$exit      = t.$sel.find(".exit");
+    t.$sc    = t.$sel.find(".sc");
+    t.$ex      = t.$sel.find(".ex");
   };
   S.Sw[pro] = {
     init: function() {
@@ -241,7 +241,7 @@ Simple = (function(s, $, w) {
     },
     listen: function() {
       var t = this;
-      t.$sel.dl("a.exit", "click", function() {
+      t.$sel.dl("a.ex", "click", function() {
         t.sx.tr("stop.smp");
       });
       t.sx.
@@ -259,50 +259,50 @@ Simple = (function(s, $, w) {
         });
     },
     hide: function() {
-      this.$exit.hide();
+      this.$ex.hide();
       return this.$sel.hide();
     },
     show: function() {
-      this.$exit.show();
+      this.$ex.show();
       return this.$sel.show();
     },
     tg: function() {
-      this.$exit.tg();
+      this.$ex.tg();
       return this.$sel.tg();
     },
     pl: function() {
       var t = this;
-      t.$screen.empty();
+      t.$sc.empty();
       t.sx.all(function(data) {
         $("<div></div>").
           attr("id", "simple" + data.slideId).
           html(mkup(data.mk)).
-          appendTo(t.$screen).hide();
+          appendTo(t.$sc).hide();
       });
-      t.$screen.children().addClass("slide").first().cell();
+      t.$sc.children().addClass("slide").first().cl();
       t.sx.tr("loaded.smp");
     },
     nx: function() {
-      var t = this, $nx = t.$screen.children(":visible").hide().nx();
-      if ($nx.length) $nx.cell();
+      var t = this, $nx = t.$sc.children(":visible").hide().nx();
+      if ($nx.length) $nx.cl();
       else {
         t.sx.tr("stop.smp").tr("tg.smp");
       }
     },
     pv: function() {
-      var t = this, $pv = t.$screen.children(":visible").hide().pv();
-      if ($pv.length) $pv.cell();
+      var t = this, $pv = t.$sc.children(":visible").hide().pv();
+      if ($pv.length) $pv.cl();
       else {
         t.sx.tr("stop.smp").tr("tg.smp");
       }
     }
   };
   S.We = function(sel) {
-    sel = sel || "#welcome";
+    sel = sel || "#we";
     var t = this;
     t.sel   = sel;
     t.$sel  = $(sel);
-    t.$screen    = t.$sel.find(".screen");
+    t.$sc    = t.$sel.find(".sc");
     t.soapboxes  = [];
   };
   S.We[pro] = {
@@ -324,10 +324,10 @@ Simple = (function(s, $, w) {
       t.sx.load();
       t.soapboxes = t.sx.rt("soapboxes");
       $.map(t.soapboxes, function(title) {
-        $("<a href='#'></a>").html(title).addClass("pl").appendTo(t.$screen);
+        $("<a href='#'></a>").html(title).addClass("pl").appendTo(t.$sc);
       });
-      $("<hr />").appendTo(t.$screen);
-      $("<a href='#'></a>").html("new").appendTo(t.$screen).click(function() {
+      $("<hr />").appendTo(t.$sc);
+      $("<a href='#'></a>").html("new").appendTo(t.$sc).click(function() {
         t.sx.tr("new.smp");
         t.hide();
       });
@@ -412,7 +412,7 @@ Simple = (function(s, $, w) {
     }
   };
 
-  $.fn.cell = function() {
+  $.fn.cl = function() {
     return this.css({
       'display': 'table-cell',
       'vertical-align': 'middle'

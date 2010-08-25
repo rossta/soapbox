@@ -25,12 +25,12 @@ textarea {
   font-size:0.9em;
   font-family:Courier, monospace;
 }
-.slide,.cell {
+.slide,.cl {
   text-align:center;
   display:table-cell;
   vertical-align:middle;
 }
-#menu .cell {padding:0 0.5em 0 0;}
+#menu .cl {padding:0 0.5em 0 0;}
 .wh {
   background-color:white;
 }
@@ -42,22 +42,22 @@ textarea {
 #pre_watermark {
   position:absolute;top:40px;right:25px;color:#ccc;font-weight:bold;
 }
-#welcome, #sw, #screen {
+#we, #sw, #sc {
   left:0;
   top:0;
   width:100%;
 }
-#welcome, #sw {
+#we, #sw {
   height:100%;
   position:fixed;
 }
-.screen {
+.sc {
   display:table;
   height:100%;
   background-color:none;
   position:absolute;
 }
-#sw a.exit {
+#sw a.ex {
   position: fixed;
   bottom: 1em;
   right: 1em;
@@ -65,6 +65,6 @@ textarea {
 #pgs { z-index:1;}
 #pgs a { padding:2px 8px; background-color: #ccc; float:left;}
 #pgs a.current { background-color: #efefef;}
-#welcome .screen { margin-left:2em;}
-#welcome a {display:block; margin:0 0 0.5em;}
+#we .sc { margin-left:2em;}
+#we a {display:block; margin:0 0 0.5em;}
 ul{text-align:left;margin: 1em 20%;}
