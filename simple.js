@@ -77,7 +77,7 @@ Simple = (function(s, $, w) {
         }
       }
       if (!spb) spb = [k];
-      if ($.inArray(k, spb) < 0) spb.push(k); 
+      if ($.inArray(k, spb) < 0) spb.unshift(k); 
 
       t.store("spb", spb);
       t.k = k;
