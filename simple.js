@@ -56,22 +56,45 @@ Simple = (function(s, $, win) {
       });
     },
     load: function(key) {
-      return this.archive.load(key);
+      var slides = this.archive.retrieve(key);
+      if (!slides) {
+        slides = [];
+        if (key == "demo") {
+          slides = [
+          "# Simply slides", 
+          "# Using markdown"
+          ];
+        }
+      }
+      this.key = key;
+      this.slides = slides;
+      return slides;
     },
     get: function(id) {
-      return this.archive.get(id);
+      return this.slides[id];
     },
     save: function(id, value) {
-      return this.archive.save(id, value);
+      log("Saving", id, value);
+      this.slides[id] = value;
+      return this.store(this.slides);
+    },
+    store: function(data) {
+      return this.archive.store(data);
     },
     all: function(callback) {
-      return this.archive.all(callback);
+      var num = 0,
+          markdown = this.slides[num];
+      while (markdown) {
+        callback({
+          num: num,
+          markdown: markdown
+        });
+        markdown = this.slides[++num];
+      }
+      return this;
     },
     clear: function() {
       return this.archive.clear();
-    },
-    slides: function() {
-      return this.archive.slides();
     }
   };
 
@@ -230,57 +253,18 @@ Simple = (function(s, $, win) {
       }
     }
   };
-
   S.Archive = function() {
     this.db = S.Archive.connection;
   };
   S.Archive[proto] = {
-    save: function(id, value) {
-      log("Saving", id, value);
-      this.slides[id] = value;
-      this.store();
-    },
-    get: function(id) {
-      return this.slides[id];
-    },
-    all: function(callback) {
-      var num = 0,
-          markdown = this.slides[num];
-      while (markdown) {
-        callback({
-          num: num,
-          markdown: markdown
-        });
-        markdown = this.slides[++num];
-      }
-      return this;
-    },
     retrieve: function(key) {
-      var s = this.db[this.key];
+      var s = this.db[key];
       if (s) return JSON.parse(s);
-      else {
-        if (key == "demo") {
-          s = [
-          "# Simply slides", 
-          "# Using markdown"
-          ];
-        } else {
-          s = [];
-        }
-        return s;
-      }
+      else return null;
     },
-    store: function() {
-      this.db[this.key] = JSON.stringify(this.slides);
+    store: function(key, data) {
+      this.db[key] = JSON.stringify(data);
       return this;
-    },
-    load: function(key) {
-      this.key = key;
-      this.slides = this.retrieve(this.key);
-      return this;
-    },
-    slides: function() {
-      return this.slides;
     },
     clear: function() {
       try {

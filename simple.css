@@ -34,16 +34,16 @@ textarea {
   display:table;
   width:470px;
 }
-#slideshow, #screen {
+#welcome, #slideshow, #screen {
   left:0;
   top:0;
   width:100%;
 }
-#slideshow {
+#welcome, #slideshow {
   height:100%;
   position:fixed;
 }
-#screen {
+.screen {
   display:table;
   height:100%;
   background-color:none;
