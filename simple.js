@@ -86,7 +86,7 @@ Simple = (function(s, $, win) {
   S.Author[proto] = {
     init: function() {
       this.listen();
-      this.load();
+      this.load("demo");
       this.display(0);
     },
     listen: function() {
@@ -111,9 +111,12 @@ Simple = (function(s, $, win) {
           return false;
         }).
         delegate("a.new", "click", function() {
-          var $slide1 = self.$preview.children().first().clone();
-          self.$preview.empty().append($slide1.show());
-          self.display($slide1.attr("id").split("_")[1], "# New Slideshow");
+          var title = prompt("Save New Slideshow As...");
+          self.$preview.empty();
+          self.$paginate.empty();
+          self.load(title);
+          self.insert(0, "# New Slideshow");
+          self.show();
           return false;
         }).
         delegate("#pagination a", "click", function() {
@@ -145,13 +148,15 @@ Simple = (function(s, $, win) {
         appendTo(self.$preview).hide();
       $("<a href='#'></a>").html(index + 1).appendTo(self.$paginate);
       self.sandbox.save(index, html);
+      self.display(index);
+      return this;
     },
     toggle: function() {
       return this.$selector.toggle();
     },
-    load: function() {
+    load: function(key) {
       var self = this;
-      self.sandbox.load("demo");
+      self.sandbox.load(key);
       self.sandbox.all(function(data) {
         self.insert(parseInt(data.num, 10), data.markdown);
       });
@@ -206,6 +211,7 @@ Simple = (function(s, $, win) {
           html(markup(data.markdown)).
           appendTo(self.$screen).hide();
       });
+      self.sandbox.trigger("loaded.simple");
       self.$screen.children().addClass("slide").first().cell();
     },
     next: function() {
@@ -246,15 +252,22 @@ Simple = (function(s, $, win) {
         });
         markdown = this.slides[++num];
       }
-      return self.sandbox.trigger("loaded.simple");
+      return this;
     },
     retrieve: function(key) {
       var s = this.db[this.key];
       if (s) return JSON.parse(s);
-      else return [
-      "# Simply slides", 
-      "# Using markdown"
-      ];
+      else {
+        if (key == "demo") {
+          s = [
+          "# Simply slides", 
+          "# Using markdown"
+          ];
+        } else {
+          s = [];
+        }
+        return s;
+      }
     },
     store: function() {
       this.db[this.key] = JSON.stringify(this.slides);
