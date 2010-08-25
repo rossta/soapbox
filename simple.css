@@ -4,7 +4,7 @@ a:hover {color:#125C00;}
 .cursor{cursor:hand;}
 .container{width:500px;margin:0 auto;}
 .bg{background-color:#ededed;}
-.gradient {background-color: #93B30E;}
+.gr {background-color: #93B30E;}
 .left { float:left; }
 .no_margin { margin:0;}
 .relative {position:relative;}
@@ -14,7 +14,7 @@ a:hover {color:#125C00;}
   padding:5px;
 }
 .table {display:table;}
-.frame { margin:15px 15px 0; }
+.fr { margin:15px 15px 0; }
 .blue {color:#87AFD9; }
 textarea {
   width:460px;
@@ -31,15 +31,15 @@ textarea {
   vertical-align:middle;
 }
 #menu .cell {padding:0 0.5em 0 0;}
-.white {
+.wh {
   background-color:white;
 }
-#preview {
+#pre {
   display:table;
   width:470px;
   clear:left;
 }
-#preview_watermark {
+#pre_watermark {
   position:absolute;top:40px;right:25px;color:#ccc;font-weight:bold;
 }
 #welcome, #slideshow, #screen {

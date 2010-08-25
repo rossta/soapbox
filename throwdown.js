@@ -1,21 +1,21 @@
 Throwdown = (function(win) {
-  var T = function(text) {
-    this.text = text;
+  var T = function(x) {
+    this.x = x;
 
     this.toH = function() {
-      var text;
+      var x;
       //replaceSpCharacter
-      text = this.sn("rSC", text);
+      x = this.sn("rSC", x);
       //padWithNewLines
-      text = this.sn("pWNL", text);
+      x = this.sn("pWNL", x);
       //replaceTabs
-      text = this.sn("rT", text);
+      x = this.sn("rT", x);
       //replaceBlankLines
-      text = this.sn("rBL", text);
+      x = this.sn("rBL", x);
       //headersToHtml
-      text = this.sn("hTH", text);
+      x = this.sn("hTH", x);
 
-      return text;
+      return x;
     };
 
     this.sn = function() {
@@ -38,56 +38,56 @@ Throwdown = (function(win) {
   },
   prt = {
     rSC: function() {
-      return new T.Sp(arguments[0] || this.text);
+      return new T.Sp(arguments[0] || this.x);
     },
     pWNL: function() {
-      return new T.Pd(arguments[0] || this.text);
+      return new T.Pd(arguments[0] || this.x);
     },
     rT: function() {
-      return new T.Tb(arguments[0] || this.text);
+      return new T.Tb(arguments[0] || this.x);
     },
     rBL: function() {
-      return new T.Bl(arguments[0] || this.text);
+      return new T.Bl(arguments[0] || this.x);
     },
     hTH: function() {
-      return new T.Hd(arguments[0] || this.text);
+      return new T.Hd(arguments[0] || this.x);
     },
     inTH: function() {
-      return new T.In(arguments[0] || this.text);
+      return new T.In(arguments[0] || this.x);
     }
   };
 
-  T.Sp = function(text) {
-    this.text = text;
+  T.Sp = function(x) {
+    this.x = x;
     this.process = function() {
-      var text = this.text.
+      var x = this.x.
         replace(/~/g,"~T").
         replace(/\$/g,"~D").
         replace(/\r\n/g,"\n").
         replace(/\r/g,"\n");
 
-      return text;
+      return x;
     };
   };
 
-  T.Pd = function(text) {
-    this.text = text;
+  T.Pd = function(x) {
+    this.x = x;
     this.process = function() {
-      return "\n\n" + this.text + "\n\n";
+      return "\n\n" + this.x + "\n\n";
     };
   };
 
-  T.Bl = function(text) {
-    this.text = text;
+  T.Bl = function(x) {
+    this.x = x;
     this.process = function() {
-      return this.text.replace(/^[ \t]+$/mg,"");
+      return this.x.replace(/^[ \t]+$/mg,"");
     };
   };
 
-  T.Tb = function(text) {
-    this.text = text;
+  T.Tb = function(x) {
+    this.x = x;
     this.process = function() {
-      var text = this.text.
+      var x = this.x.
         replace(/\t(?=\t)/g, tab).
         replace(/\t/g,"~A~B").
         replace(/~B(.+?)~A/g, function(wholeMatch,m1,m2) {
@@ -101,24 +101,24 @@ Throwdown = (function(win) {
         }).
         replace(/~A/g, tab).
         replace(/~B/g,"");
-      return text;
+      return x;
     };
   };
 
-  T.Hd = function(text) {
-    this.text = text;
+  T.Hd = function(x) {
+    this.x = x;
     this.process = function() {
-      // Setext-style headers:
+      // Sex-style headers:
     	//	Header 1
     	//	========
     	//
     	//	Header 2
     	//	--------
     	//
-      // text = text.replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm,
+      // x = x.replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm,
       //  function(wholeMatch,m1){return hashBlock("<h1>" + _RunSpanGamut(m1) + "</h1>");});
       //
-      // text = text.replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm,
+      // x = x.replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm,
       //  function(matchFound,m1){return hashBlock("<h2>" + _RunSpanGamut(m1) + "</h2>");});
       //
     	// atx-style headers:
@@ -130,17 +130,17 @@ Throwdown = (function(win) {
     	//
 
     	/*
-    		text = text.replace(/
+    		x = x.replace(/
     			^(\#{1,6})				// $1 = string of #'s
     			[ \t]*
-    			(.+?)					// $2 = Header text
+    			(.+?)					// $2 = Header x
     			[ \t]*
     			\#*						// optional closing #'s (not counted)
     			\n+
     		/gm, function() {...});
     	*/
 
-      var text = this.text.
+      var x = this.x.
         replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm, function(wholeMatch,m1) {
           return "<h1>" + sn.call(this, "inTH", m1) + "</h1>";
         }).
@@ -153,19 +153,19 @@ Throwdown = (function(win) {
            return "<h" + h + ">" + sn.call(this, "inTH", m2) + "</h" + h + ">";
          });
 
-      return text;
+      return x;
     };
   };
   
-  T.In = function(text) {
-    this.text = text;
+  T.In = function(x) {
+    this.x = x;
     this.process = function() {
-      return this.text;
+      return this.x;
     };
   }
 
-  win.throwdown = function(text) {
-    return new T(text);
+  win.throwdown = function(x) {
+    return new T(x);
   };
 
   return T;
