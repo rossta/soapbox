@@ -42,7 +42,6 @@ Simple = (function(s, $, w) {
       t.ech("init");
       $("a.tg").bind("click", function() {
         t.ech("tg");
-        return false;
       });
       t.bind("tg.smp", function() {
         t.ech("tg");
@@ -147,19 +146,15 @@ Simple = (function(s, $, w) {
         }).
         dl("a.pl", "click", function() {
           t.sx.tr("pl.smp");
-          return false;
         }).
         dl("a.ins", "click", function() {
           t.ins(t.$pre.children().length, "# New Slide");
-          return false;
         }).
         dl("a.nw", "click", function() {
           t.createNew();
-          return false;
         }).
         dl("#pgs a", "click", function() {
           t.dp(parseInt($(this).html(), 10) - 1);
-          return false;
         }).
         dl(".hm", "click", function() {
           w.location.reload();
