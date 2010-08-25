@@ -8,6 +8,7 @@ Simple = (function(s, $, win) {
       sandbox.
         add(S.Author).
         add(S.Slideshow).
+        add(S.Welcome).
         add(S.KeyListener).
         init();
       Simple.app = sandbox;
@@ -55,14 +56,55 @@ Simple = (function(s, $, win) {
         if (typeof module[fn] == 'function') module[fn]();
       });
     },
-    get: function(key) {
-      return this.archive.get(key);
+    load: function(key) {
+      key = key || "demo";
+      var slides = this.retrieve(key), 
+      soapboxes = this.retrieve("soapboxes");
+      if (!slides) {
+        slides = [];
+        if (key == "demo") {
+          slides = [
+          "# Create slides", 
+          "with text",
+          "<h2>html</h2>",
+          "# and (some) markdown",
+          "# Any questions?"
+          ];
+        }
+      }
+      if (!soapboxes) soapboxes = [key];
+      if ($.inArray(key, soapboxes) < 0) soapboxes.push(key); 
+
+      this.store("soapboxes", soapboxes);
+      this.key = key;
+      this.slides = slides;
+      return slides;
     },
-    save: function(data) {
-      return this.archive.save(data);
+    retrieve: function(key) {
+      return this.archive.retrieve(key);
     },
-    load: function(callback) {
-      return this.archive.load(callback);
+    get: function(id) {
+      return this.slides[id];
+    },
+    save: function(id, value) {
+      log("Saving", id, value);
+      this.slides[id] = value;
+      return this.store(this.key, this.slides);
+    },
+    store: function(key, data) {
+      return this.archive.store(key, data);
+    },
+    all: function(callback) {
+      var num = 0,
+          markdown = this.slides[num];
+      while (markdown) {
+        callback({
+          num: num,
+          markdown: markdown
+        });
+        markdown = this.slides[++num];
+      }
+      return this;
     },
     clear: function() {
       return this.archive.clear();
@@ -75,13 +117,12 @@ Simple = (function(s, $, win) {
     this.$selector  = $(selector);
     this.$preview   = this.$selector.find('#preview');
     this.$textarea  = this.$selector.find('textarea');
-    this.SLIDE_1    = "# Soapboax\n\nSimply slides";
+    this.$paginate  = this.$selector.find('#pagination');
   };
   S.Author[proto] = {
     init: function() {
-      var val = this.sandbox.get("slide1") || this.SLIDE_1;
+      this.hide();
       this.listen();
-      this.$textarea.val(val).change();
     },
     listen: function() {
       var self = this;
@@ -91,38 +132,85 @@ Simple = (function(s, $, win) {
               markdown = $this.val();
               slideId = $this.attr("name");
           $("#" + slideId).html(markup(markdown));
-          self.sandbox.save({
-            key: slideId,
-            val: markdown
-          });
+          self.sandbox.save(slideId.split("_")[1], markdown);
+        }).
+        delegate("#preview", "click", function() {
+          $(this).next().find("textarea").focus();
         }).
         delegate("a.play", "click", function() {
           self.sandbox.trigger("play.simple");
+          return false;
         }).
-        delegate("a.add", "click", function() {
-          var slideId, $slide, split;
-          $slide = self.$preview.children().hide().last();
-          slideId = $slide.attr("id").replace(/\d+/, function(match) {
-            return parseInt(match, 10) + 1;
-          });
-          $slide.clone().attr("id", slideId).appendTo(self.$preview).show();
-          self.$textarea.attr("name", slideId).val("# New Slide").change();
+        delegate("a.insert", "click", function() {
+          self.insert(self.$preview.children().length, "# New Slide");
+          return false;
         }).
         delegate("a.new", "click", function() {
-          var $slide1 = self.$preview.children().first().clone();
-          self.$preview.empty().append($slide1.show());
-          self.sandbox.clear();
-          self.$textarea.attr("name", $slide1.attr("id")).val(self.SLIDE_1).change();
+          self.createNew();
+          return false;
+        }).
+        delegate("#pagination a", "click", function() {
+          self.display(parseInt($(this).html(), 10) - 1);
+          return false;
+        }).
+        delegate(".home", "click", function() {
+          return window.location.reload();
         });
+      self.sandbox.
+        bind("new.simple", function() {
+          self.createNew();
+        }).
+        bind("edit.simple", function() {
+          self.load(self.sandbox.key);
+        });
+        
     },
     hide: function() {
-      this.$selector.hide();
+      return this.$selector.hide();
     },
     show: function() {
-      this.$selector.show();
+      return this.$selector.show();
+    },
+    createNew: function() {
+      var self = this, title = prompt("Save New Slideshow As...");
+      self.load(title);
+      self.$preview.empty();
+      self.$paginate.empty();
+      self.insert(0, "# New Slideshow");
+      self.show();
+    },
+    display: function(index, value) {
+      var self = this, slideId = "slide_" + index;
+      value = value || self.sandbox.get(index);
+      $("div.slide").hide();
+      $("[id$=" + slideId +"]").show();
+      self.$paginate.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
+      self.$textarea.attr("name", slideId).val(value);
+      self.$textarea.change();
+      return this;
+    },
+    insert: function(index, html) {
+      var self = this;
+      $("<div></div>").
+        attr("id", "slide_" + index).
+        attr("class", "slide card padding").
+        html(markup(html)).
+        appendTo(self.$preview).hide();
+      $("<a href='#'></a>").html(index + 1).appendTo(self.$paginate);
+      self.sandbox.save(index, html);
+      self.display(index);
+      return this;
     },
     toggle: function() {
       return this.$selector.toggle();
+    },
+    load: function(key) {
+      var self = this;
+      self.sandbox.load(key);
+      self.sandbox.all(function(data) {
+        self.insert(parseInt(data.num, 10), data.markdown);
+      });
+      self.display(0);
     }
   };
 
@@ -130,7 +218,8 @@ Simple = (function(s, $, win) {
     selector = selector || "#slideshow";
     this.selector   = selector;
     this.$selector  = $(selector);
-    this.$screen    = $("#screen");
+    this.$screen    = this.$selector.find(".screen");
+    this.$exit      = this.$selector.find(".exit");
   };
   S.Slideshow[proto] = {
     init: function() {
@@ -157,24 +246,28 @@ Simple = (function(s, $, win) {
         });
     },
     hide: function() {
+      this.$exit.hide();
       return this.$selector.hide();
     },
     show: function() {
+      this.$exit.show();
       return this.$selector.show();
     },
     toggle: function() {
+      this.$exit.toggle();
       return this.$selector.toggle();
     },
     play: function() {
       var self = this;
       self.$screen.empty();
-      self.sandbox.load(function(data) {
+      self.sandbox.all(function(data) {
         $("<div></div>").
           attr("id", "simple" + data.slideId).
           html(markup(data.markdown)).
           appendTo(self.$screen).hide();
       });
       self.$screen.children().addClass("slide").first().cell();
+      self.sandbox.trigger("loaded.simple");
     },
     next: function() {
       var $next = this.$screen.children(":visible").hide().next();
@@ -191,40 +284,65 @@ Simple = (function(s, $, win) {
       }
     }
   };
-
+  S.Welcome = function(selector) {
+    selector = selector || "#welcome";
+    this.selector   = selector;
+    this.$selector  = $(selector);
+    this.$screen    = this.$selector.find(".screen");
+    this.soapboxes  = [];
+  };
+  S.Welcome[proto] = {
+    init: function() {
+      var self = this;
+      this.show();
+      this.$selector.
+        delegate("a.play", "click", function() {
+          self.sandbox.load($(this).text());
+          self.hide();
+          self.sandbox.trigger("edit.simple").trigger("play.simple");
+        });
+    },
+    hide: function() {
+      return this.$selector.hide();
+    },
+    show: function() {
+      var self = this;
+      this.sandbox.load();
+      this.soapboxes = this.sandbox.retrieve("soapboxes");
+      $.map(this.soapboxes, function(title) {
+        $("<a href='#'></a>").html(title).addClass("play").appendTo(self.$screen);
+      });
+      $("<hr />").appendTo(self.$screen);
+      $("<a href='#'></a>").html("new").appendTo(self.$screen).click(function() {
+        self.sandbox.trigger("new.simple");
+        self.hide();
+      });
+      return this.$selector.show();
+    }
+  };
+  
   S.Archive = function() {
-    this.db = window.localStorage || {};
-    this.keys = [];
+    this.db = S.Archive.connection;
   };
   S.Archive[proto] = {
-    save: function(data) {
-      log("Saving", data.key, data.val);
-      return this.db[data.key] = data.val;
+    retrieve: function(key) {
+      var s = this.db[key];
+      if (s) return JSON.parse(s);
+      else return null;
     },
-    get: function(key) {
-      return this.db[key];
-    },
-    load: function(callback) {
-      var slide = "slide_",
-          num   = 1,
-          markdown  = this.db[slide + num];
-      while (markdown) {
-        callback({
-          slideId: slideId,
-          markdown: markdown
-        });
-        markdown = this.db[slide + ++num];
-      }
-      return self.sandbox.trigger("loaded.simple");
+    store: function(key, data) {
+      this.db[key] = JSON.stringify(data);
+      return this;
     },
     clear: function() {
       try {
         this.db.clear();
       } catch (e) {
-        this.db = {};
+        S.Archive.connection = window.localStorage || {};
       }
     }
   };
+  S.Archive.connection = window.localStorage || {};
 
   S.KeyListener = function() {
     this.EDIT = "edit";
@@ -252,8 +370,17 @@ Simple = (function(s, $, win) {
           var key = e.keyCode;
           switch (self.context) {
             case self.EDIT:
-              log("keydown while editing");
-              break;
+              switch (key) {
+                case keys.left:
+                  self.sandbox.trigger("prev.simple");
+                  break;
+                case keys.right:
+                  self.sandbox.trigger("next.simple");
+                  break;
+                default:
+                  log(key);
+                  break;
+              }
             case self.SHOW:
               switch (key) {
                 case keys.space:

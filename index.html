@@ -10,21 +10,29 @@
   </head>
   <body class="gradient">
     <div id="author" class="container">
-      <div class="frame">
-        <a href="#" class="add" alt="Add slide" title="Add slide">Insert</a>
-        <a href="#" class="play toggle" alt="Play slideshow" title="Play slideshow">Play</a>
-        <a href="#" class="new" alt="New presentation" title="New presentation">New</a>
-      </div>
-      <div id="preview" class="frame white">
-        <div id="slide_1" class="slide card padding"></div>
+      <div id="menu" class="frame table">
+        <h2 style="margin:0" class="home cursor cell">soapbox</h2>
+        <a href="#" class="insert cell" alt="Insert slide at end" title="Insert slide at end">insert</a>
+        <a href="#" class="play toggle cell" alt="Play slideshow" title="Play slideshow">play</a>
+        <a href="#" class="new cell" alt="New presentation" title="New presentation">new</a>
       </div>
       <div id="editor" class="frame">
-        <textarea name="slide_1" rows="8" cols="40" class="card padding blue"></textarea>
+        <textarea name="slide_0" rows="8" cols="40" class="card padding blue"></textarea>
+      </div>
+      <div id="pagination" class="frame"></div>
+      <div class="relative">
+        <div id="preview" class="frame white"></div>
+        <div id="preview_watermark">preview</div>
       </div>
     </div>
     <div id="slideshow" class="white">
-      <div id="screen"></div>
-      <a href="#" class="exit toggle">Exit</a>
+      <div id="screen" class="screen"></div>
+      <a href="#" class="exit toggle">exit</a>
+    </div>
+    <div id="welcome">
+      <div class="screen">
+        <h1>soapbox</h1>
+      </div>
     </div>
     <script type="text/javascript" charset="utf-8" src="simple.js"></script>
     <script type="text/javascript" charset="utf-8" src="throwdown.js"></script>
