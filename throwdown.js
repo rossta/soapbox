@@ -2,62 +2,62 @@ Throwdown = (function(win) {
   var T = function(text) {
     this.text = text;
 
-    this.toHtml = function() {
+    this.toH = function() {
       var text;
-
-      text = this.send("replaceSpecialCharacters", text);
-
-      text = this.send("padWithNewLines", text);
-
-      text = this.send("replaceTabs", text);
-
-      text = this.send("replaceBlankLines", text);
-
-      text = this.send("headersToHtml", text);
+      //replaceSpCharacter
+      text = this.sn("rSC", text);
+      //padWithNewLines
+      text = this.sn("pWNL", text);
+      //replaceTabs
+      text = this.sn("rT", text);
+      //replaceBlankLines
+      text = this.sn("rBL", text);
+      //headersToHtml
+      text = this.sn("hTH", text);
 
       return text;
     };
 
-    this.send = function() {
-      return send.apply(this, arguments);
+    this.sn = function() {
+      return sn.apply(this, arguments);
     };
 
   },
 
-  proto = "prototype",
+  pro = "prototype",
   tab = "    ",
 
-  send = function() {
-    var args  = Array[proto].slice.call(arguments, 0),
-    fnName    = args.shift();
+  sn = function() {
+    var args  = Array[pro].slice.call(arguments, 0),
+    fn    = args.shift();
     try {
-      return protect[fnName].apply(this, args).process();
+      return prt[fn].apply(this, args).process();
     } catch(e) {
-      throw "Error while sending '" + fnName + "': " + e.toString();
+      throw "Error '" + fn + "'";
     }
   },
-  protect = {
-    replaceSpecialCharacters: function() {
-      return new T.Special(arguments[0] || this.text);
+  prt = {
+    rSC: function() {
+      return new T.Sp(arguments[0] || this.text);
     },
-    padWithNewLines: function() {
-      return new T.Padding(arguments[0] || this.text);
+    pWNL: function() {
+      return new T.Pd(arguments[0] || this.text);
     },
-    replaceTabs: function() {
-      return new T.Tab(arguments[0] || this.text);
+    rT: function() {
+      return new T.Tb(arguments[0] || this.text);
     },
-    replaceBlankLines: function() {
-      return new T.BlankLine(arguments[0] || this.text);
+    rBL: function() {
+      return new T.Bl(arguments[0] || this.text);
     },
-    headersToHtml: function() {
-      return new T.Header(arguments[0] || this.text);
+    hTH: function() {
+      return new T.Hd(arguments[0] || this.text);
     },
-    inlineToHtml: function() {
-      return new T.Inline(arguments[0] || this.text);
+    inTH: function() {
+      return new T.In(arguments[0] || this.text);
     }
   };
 
-  T.Special = function(text) {
+  T.Sp = function(text) {
     this.text = text;
     this.process = function() {
       var text = this.text.
@@ -70,21 +70,21 @@ Throwdown = (function(win) {
     };
   };
 
-  T.Padding = function(text) {
+  T.Pd = function(text) {
     this.text = text;
     this.process = function() {
       return "\n\n" + this.text + "\n\n";
     };
   };
 
-  T.BlankLine = function(text) {
+  T.Bl = function(text) {
     this.text = text;
     this.process = function() {
       return this.text.replace(/^[ \t]+$/mg,"");
     };
   };
 
-  T.Tab = function(text) {
+  T.Tb = function(text) {
     this.text = text;
     this.process = function() {
       var text = this.text.
@@ -105,7 +105,7 @@ Throwdown = (function(win) {
     };
   };
 
-  T.Header = function(text) {
+  T.Hd = function(text) {
     this.text = text;
     this.process = function() {
       // Setext-style headers:
@@ -142,22 +142,22 @@ Throwdown = (function(win) {
 
       var text = this.text.
         replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm, function(wholeMatch,m1) {
-          return "<h1>" + send.call(this, "inlineToHtml", m1) + "</h1>";
+          return "<h1>" + sn.call(this, "inTH", m1) + "</h1>";
         }).
         replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm, function(matchFound,m1) { 
-          return "<h2>" + send.call(this, "inlineToHtml", m1) + "</h2>";
+          return "<h2>" + sn.call(this, "inTH", m1) + "</h2>";
         }).
         replace(/^(\#{1,6})[ \t]*(.+?)[ \t]*\#*\n+/gm,
          function(wholeMatch,m1,m2) {
            var h = m1.length;
-           return "<h" + h + ">" + send.call(this, "inlineToHtml", m2) + "</h" + h + ">";
+           return "<h" + h + ">" + sn.call(this, "inTH", m2) + "</h" + h + ">";
          });
 
       return text;
     };
   };
   
-  T.Inline = function(text) {
+  T.In = function(text) {
     this.text = text;
     this.process = function() {
       return this.text;

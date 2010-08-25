@@ -1,6 +1,6 @@
 Simple = (function(s, $, win) {
   var S = s,
-  proto = "prototype",
+  pro = "prototype",
   methods = {
     generate: function() {
       var author, slideshow, s;
@@ -21,13 +21,13 @@ Simple = (function(s, $, win) {
     }
   },
   markup = function(markdown) {
-    return throwdown(markdown).toHtml();
+    return throwdown(markdown).toH();
   };
 
   S.Sandbox = function() {
     this.modules = [];
   };
-  S.Sandbox[proto] = {
+  S.Sandbox[pro] = {
     add: function(klass) {
       var module = new klass();
       module.sandbox = this;
@@ -119,7 +119,7 @@ Simple = (function(s, $, win) {
     this.$textarea  = this.$selector.find('textarea');
     this.$paginate  = this.$selector.find('#pagination');
   };
-  S.Author[proto] = {
+  S.Author[pro] = {
     init: function() {
       this.hide();
       this.listen();
@@ -221,7 +221,7 @@ Simple = (function(s, $, win) {
     this.$screen    = this.$selector.find(".screen");
     this.$exit      = this.$selector.find(".exit");
   };
-  S.Slideshow[proto] = {
+  S.Slideshow[pro] = {
     init: function() {
       this.hide();
       this.listen();
@@ -291,7 +291,7 @@ Simple = (function(s, $, win) {
     this.$screen    = this.$selector.find(".screen");
     this.soapboxes  = [];
   };
-  S.Welcome[proto] = {
+  S.Welcome[pro] = {
     init: function() {
       var self = this;
       this.show();
@@ -324,7 +324,7 @@ Simple = (function(s, $, win) {
   S.Archive = function() {
     this.db = S.Archive.connection;
   };
-  S.Archive[proto] = {
+  S.Archive[pro] = {
     retrieve: function(key) {
       var s = this.db[key];
       if (s) return JSON.parse(s);
@@ -349,7 +349,7 @@ Simple = (function(s, $, win) {
     this.SHOW = "show";
     this.context = this.EDIT;
   };
-  S.KeyListener[proto] = {
+  S.KeyListener[pro] = {
     keys: {
       space : 32,
       left  : 37,
