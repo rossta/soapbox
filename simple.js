@@ -135,6 +135,7 @@ Simple = (function(s, $, win) {
       value = value || self.sandbox.get(index);
       $("div.slide").hide();
       $("[id$=" + slideId +"]").show();
+      self.$paginate.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
       self.$textarea.attr("name", slideId).val(value);
       self.$textarea.change();
       return this;

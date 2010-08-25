@@ -1,4 +1,5 @@
 body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,Tahoma,Verdana,serif;}
+a {text-decoration:none;}
 .container{width:500px;margin:0 auto;}
 .bg{background-color:#ededed;}
 .gradient {background-color: #6DA23C;}
@@ -51,3 +52,5 @@ textarea {
   bottom: 1em;
   right: 1em;
 }
+#pagination a { padding:2px; background-color: #ccc;}
+#pagination a.current { background-color: #efefef;}
