@@ -1,14 +1,16 @@
 Simple = (function(s, $, w) {
   $.fn.dl = $.fn.delegate;
   $.fn.tr = $.fn.trigger;
+  $.fn.nx = $.fn.next;
+  $.fn.pv = $.fn.prev;
+  $.fn.tg = $.fn.toggle;
   
   var S = s,
   pro = "prototype",
   doc = document,
   methods = {
     init: function() {
-      var au, sw, s;
-      sx = new S.Sx();
+      var sx = new S.Sx();
       sx.
         add(S.Au).
         add(S.Sw).
@@ -40,14 +42,15 @@ Simple = (function(s, $, w) {
     },
     init: function() {
       var t = this;
-      this.archive = new S.Archive();
+      t.archive = new S.Archive();
       t.forEach("init");
-      $("a.toggle").bind("click", function() {
-        t.forEach("toggle");
+      $("a.tg").bind("click", function() {
+        t.forEach("tg");
       });
-      this.bind("toggle.smp", function() {
-        t.forEach("toggle");
+      t.bind("tg.smp", function() {
+        t.forEach("tg");
       });
+      return t;
     },
     tr: function(event, data) {
       return $(doc).tr(event, data);
@@ -62,8 +65,8 @@ Simple = (function(s, $, w) {
     },
     load: function(k) {
       k = k || "demo";
-      var slides = this.rt(k), 
-      soapboxes = this.rt("soapboxes");
+      var t = this, slides = t.rt(k), 
+      soapboxes = t.rt("soapboxes");
       if (!slides) {
         slides = [];
         if (k == "demo") {
@@ -79,9 +82,9 @@ Simple = (function(s, $, w) {
       if (!soapboxes) soapboxes = [k];
       if ($.inArray(k, soapboxes) < 0) soapboxes.push(k); 
 
-      this.store("soapboxes", soapboxes);
-      this.k = k;
-      this.s = slides;
+      t.store("soapboxes", soapboxes);
+      t.k = k;
+      t.s = slides;
       return slides;
     },
     rt: function(k) {
@@ -92,23 +95,25 @@ Simple = (function(s, $, w) {
     },
     save: function(id, value) {
       log("Saving", id, value);
-      this.s[id] = value;
-      return this.store(this.k, this.s);
+      var t = this;
+      t.s[id] = value;
+      return t.store(t.k, t.s);
     },
     store: function(k, data) {
       return this.archive.store(k, data);
     },
     all: function(callback) {
-      var num = 0,
-          mk = this.s[num];
+      var t = this,
+          num = 0,
+          mk = t.s[num];
       while (mk) {
         callback({
           num: num,
           mk: mk
         });
-        mk = this.s[++num];
+        mk = t.s[++num];
       }
-      return this;
+      return t;
     },
     clear: function() {
       return this.archive.clear();
@@ -117,20 +122,22 @@ Simple = (function(s, $, w) {
 
   S.Au = function(sel) {
     sel = sel || "#au";
-    this.sel   = sel;
-    this.$sel  = $(sel);
-    this.$pre   = this.$sel.find('#pre');
-    this.$ta  = this.$sel.find('textarea');
-    this.$pgs  = this.$sel.find('#pgs');
+    var t = this;
+    t.sel   = sel;
+    t.$sel  = $(sel);
+    t.$pre   = t.$sel.find('#pre');
+    t.$ta  = t.$sel.find('textarea');
+    t.$pgs  = t.$sel.find('#pgs');
   };
   S.Au[pro] = {
     init: function() {
-      this.hide();
-      this.listen();
+      var t = this;
+      t.hide();
+      t.listen();
     },
     listen: function() {
       var t = this;
-      this.$sel.
+      t.$sel.
         dl("textarea", "keyup change", function() {
           var $this = $(this),
               mk = $this.val();
@@ -139,7 +146,7 @@ Simple = (function(s, $, w) {
           t.sx.save(slideId.split("_")[1], mk);
         }).
         dl("#pre", "click", function() {
-          $(this).next().find("textarea").focus();
+          $(this).nx().find("textarea").focus();
         }).
         dl("a.pl", "click", function() {
           t.sx.tr("pl.smp");
@@ -191,7 +198,7 @@ Simple = (function(s, $, w) {
       t.$pgs.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
       t.$ta.attr("name", slideId).val(value);
       t.$ta.change();
-      return this;
+      return t;
     },
     ins: function(index, html) {
       var t = this;
@@ -203,10 +210,10 @@ Simple = (function(s, $, w) {
       $("<a href='#'></a>").html(index + 1).appendTo(t.$pgs);
       t.sx.save(index, html);
       t.display(index);
-      return this;
+      return t;
     },
-    toggle: function() {
-      return this.$sel.toggle();
+    tg: function() {
+      return this.$sel.tg();
     },
     load: function(k) {
       var t = this;
@@ -220,19 +227,21 @@ Simple = (function(s, $, w) {
 
   S.Sw = function(sel) {
     sel = sel || "#sw";
-    this.sel   = sel;
-    this.$sel  = $(sel);
-    this.$screen    = this.$sel.find(".screen");
-    this.$exit      = this.$sel.find(".exit");
+    var t = this;
+    t.sel   = sel;
+    t.$sel  = $(sel);
+    t.$screen    = t.$sel.find(".screen");
+    t.$exit      = t.$sel.find(".exit");
   };
   S.Sw[pro] = {
     init: function() {
-      this.hide();
-      this.listen();
+      var t = this;
+      t.hide();
+      t.listen();
     },
     listen: function() {
       var t = this;
-      this.$sel.dl("a.exit", "click", function() {
+      t.$sel.dl("a.exit", "click", function() {
         t.sx.tr("stop.smp");
       });
       t.sx.
@@ -242,11 +251,11 @@ Simple = (function(s, $, w) {
         bind("loaded.smp", function(e, data) {
           t.show();
         }).
-        bind("next.smp", function() {
-          t.next();
+        bind("nx.smp", function() {
+          t.nx();
         }).
-        bind("prev.smp", function() {
-          t.prev();
+        bind("pv.smp", function() {
+          t.pv();
         });
     },
     hide: function() {
@@ -257,9 +266,9 @@ Simple = (function(s, $, w) {
       this.$exit.show();
       return this.$sel.show();
     },
-    toggle: function() {
-      this.$exit.toggle();
-      return this.$sel.toggle();
+    tg: function() {
+      this.$exit.tg();
+      return this.$sel.tg();
     },
     pl: function() {
       var t = this;
@@ -273,33 +282,34 @@ Simple = (function(s, $, w) {
       t.$screen.children().addClass("slide").first().cell();
       t.sx.tr("loaded.smp");
     },
-    next: function() {
-      var t = this, $next = t.$screen.children(":visible").hide().next();
-      if ($next.length) $next.cell();
+    nx: function() {
+      var t = this, $nx = t.$screen.children(":visible").hide().nx();
+      if ($nx.length) $nx.cell();
       else {
-        t.sx.tr("stop.smp").tr("toggle.smp");
+        t.sx.tr("stop.smp").tr("tg.smp");
       }
     },
-    prev: function() {
-      var t = this, $prev = t.$screen.children(":visible").hide().prev();
-      if ($prev.length) $prev.cell();
+    pv: function() {
+      var t = this, $pv = t.$screen.children(":visible").hide().pv();
+      if ($pv.length) $pv.cell();
       else {
-        t.sx.tr("stop.smp").tr("toggle.smp");
+        t.sx.tr("stop.smp").tr("tg.smp");
       }
     }
   };
   S.We = function(sel) {
     sel = sel || "#welcome";
-    this.sel   = sel;
-    this.$sel  = $(sel);
-    this.$screen    = this.$sel.find(".screen");
-    this.soapboxes  = [];
+    var t = this;
+    t.sel   = sel;
+    t.$sel  = $(sel);
+    t.$screen    = t.$sel.find(".screen");
+    t.soapboxes  = [];
   };
   S.We[pro] = {
     init: function() {
       var t = this;
-      this.show();
-      this.$sel.
+      t.show();
+      t.$sel.
         dl("a.pl", "click", function() {
           t.sx.load($(this).text());
           t.hide();
@@ -311,9 +321,9 @@ Simple = (function(s, $, w) {
     },
     show: function() {
       var t = this;
-      this.sx.load();
-      this.soapboxes = this.sx.rt("soapboxes");
-      $.map(this.soapboxes, function(title) {
+      t.sx.load();
+      t.soapboxes = t.sx.rt("soapboxes");
+      $.map(t.soapboxes, function(title) {
         $("<a href='#'></a>").html(title).addClass("pl").appendTo(t.$screen);
       });
       $("<hr />").appendTo(t.$screen);
@@ -321,7 +331,7 @@ Simple = (function(s, $, w) {
         t.sx.tr("new.smp");
         t.hide();
       });
-      return this.$sel.show();
+      return t.$sel.show();
     }
   };
   
@@ -349,9 +359,10 @@ Simple = (function(s, $, w) {
   S.Archive.connection = w.localStorage || {};
 
   S.Ky = function() {
-    this.EDIT = "edit";
-    this.SHOW = "show";
-    this.context = this.EDIT;
+    var t = this;
+    t.EDIT = "edit";
+    t.SHOW = "show";
+    t.context = t.EDIT;
   };
   S.Ky[pro] = {
     ks: {
@@ -382,14 +393,14 @@ Simple = (function(s, $, w) {
                   log("space");
                   break;
                 case ks.left:
-                  t.sx.tr("prev.smp");
+                  t.sx.tr("pv.smp");
                   break;
                 case ks.right:
-                  t.sx.tr("next.smp");
+                  t.sx.tr("nx.smp");
                   break;
                 case ks.esc:
                   t.sx.tr("stop.smp");
-                  t.sx.tr("toggle.smp");
+                  t.sx.tr("tg.smp");
                   break;
                 default:
                   log(k);
