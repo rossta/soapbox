@@ -22,12 +22,6 @@ Simple = (function(s, $, w) {
       return sx;
     }
   },
-  log = function() {
-    var c = w.console;
-    if (c && c.log && typeof c.log.apply == 'function') {
-      c.log.apply(c, arguments);
-    }
-  },
   mkup = function(mk) {
     return throwdown(mk).toH();
   };
@@ -44,13 +38,13 @@ Simple = (function(s, $, w) {
     },
     init: function() {
       var t = this;
-      t.archive = new S.Archive();
-      t.forEach("init");
+      t.arc = new S.Archive();
+      t.ech("init");
       $("a.tg").bind("click", function() {
-        t.forEach("tg");
+        t.ech("tg");
       });
       t.bind("tg.smp", function() {
-        t.forEach("tg");
+        t.ech("tg");
       });
       return t;
     },
@@ -60,7 +54,7 @@ Simple = (function(s, $, w) {
     bind: function(event, callback) {
       return $(doc).bind(event, callback);
     },
-    forEach: function(fn) {
+    ech: function(fn) {
       $.map(this.ms, function(m) {
         if (typeof m[fn] == 'function') m[fn]();
       });
@@ -90,26 +84,25 @@ Simple = (function(s, $, w) {
       return sls;
     },
     rt: function(k) {
-      return this.archive.rt(k);
+      return this.arc.rt(k);
     },
     get: function(id) {
       return this.s[id];
     },
     save: function(id, value) {
-      log("Saving", id, value);
       var t = this;
       t.s[id] = value;
       return t.store(t.k, t.s);
     },
     store: function(k, data) {
-      return this.archive.store(k, data);
+      return this.arc.store(k, data);
     },
-    all: function(callback) {
+    all: function(cbk) {
       var t = this,
           num = 0,
           mk = t.s[num];
       while (mk) {
-        callback({
+        cbk({
           num: num,
           mk: mk
         });
@@ -118,7 +111,7 @@ Simple = (function(s, $, w) {
       return t;
     },
     clear: function() {
-      return this.archive.clear();
+      return this.arc.clear();
     }
   };
 
@@ -163,7 +156,7 @@ Simple = (function(s, $, w) {
           return false;
         }).
         dl("#pgs a", "click", function() {
-          t.display(parseInt($(this).html(), 10) - 1);
+          t.dp(parseInt($(this).html(), 10) - 1);
           return false;
         }).
         dl(".hm", "click", function() {
@@ -192,7 +185,7 @@ Simple = (function(s, $, w) {
       t.ins(0, "# New Slideshow");
       t.show();
     },
-    display: function(index, value) {
+    dp: function(index, value) {
       var t = this, slId = "sl_" + index;
       value = value || t.sx.get(index);
       $("div.sl").hide();
@@ -211,7 +204,7 @@ Simple = (function(s, $, w) {
         appendTo(t.$pre).hide();
       $(ln).html(index + 1).appendTo(t.$pgs);
       t.sx.save(index, html);
-      t.display(index);
+      t.dp(index);
       return t;
     },
     tg: function() {
@@ -223,7 +216,7 @@ Simple = (function(s, $, w) {
       t.sx.all(function(data) {
         t.ins(parseInt(data.num, 10), data.mk);
       });
-      t.display(0);
+      t.dp(0);
     }
   };
 
@@ -363,7 +356,7 @@ Simple = (function(s, $, w) {
     var t = this;
     t.EDIT = "edit";
     t.SHOW = "show";
-    t.context = t.EDIT;
+    t.cxt = t.EDIT;
   };
   S.Ky[pro] = {
     ks: {
@@ -377,22 +370,16 @@ Simple = (function(s, $, w) {
       ks = t.ks;
       t.sx.
         bind("pl.smp", function() {
-          t.context = t.SHOW;
+          t.cxt = t.SHOW;
         }).
         bind("stop.smp", function() {
-          t.context = t.EDIT;
+          t.cxt = t.EDIT;
         }).
         bind("keydown", function(e) {
           var k = e.keyCode;
-          switch (t.context) {
-            case t.EDIT:
-              log(k);
-              break;
+          switch (t.cxt) {
             case t.SHOW:
               switch (k) {
-                case ks.space:
-                  log("space");
-                  break;
                 case ks.left:
                   t.sx.tr("pv.smp");
                   break;
@@ -404,7 +391,6 @@ Simple = (function(s, $, w) {
                   t.sx.tr("tg.smp");
                   break;
                 default:
-                  log(k);
                   break;
               }
               break;
