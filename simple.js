@@ -42,6 +42,7 @@ Simple = (function(s, $, w) {
       t.ech("init");
       $("a.tg").bind("click", function() {
         t.ech("tg");
+        return false;
       });
       t.bind("tg.smp", function() {
         t.ech("tg");
@@ -67,7 +68,7 @@ Simple = (function(s, $, w) {
         sls = [];
         if (k == "demo") {
           sls = [
-          "# Create sls", 
+          "# Create slides", 
           "with text",
           "<h2>html</h2>",
           "# and (some) markdown",
@@ -142,6 +143,7 @@ Simple = (function(s, $, w) {
         }).
         dl("#pre", "click", function() {
           $(this).nx().find("textarea").focus();
+          return false;
         }).
         dl("a.pl", "click", function() {
           t.sx.tr("pl.smp");
@@ -160,7 +162,8 @@ Simple = (function(s, $, w) {
           return false;
         }).
         dl(".hm", "click", function() {
-          return w.location.reload();
+          w.location.reload();
+          return false;
         });
       t.sx.
         bind("nw.smp", function() {
