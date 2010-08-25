@@ -63,10 +63,10 @@ Throwdown = (function(win) {
     this.x = x;
     this.p = function() {
       var x = this.x.
-        replace(/~/g,"~T").
-        replace(/\$/g,"~D").
-        replace(/\r\n/g,"\n").
-        replace(/\r/g,"\n");
+        rp(/~/g,"~T").
+        rp(/\$/g,"~D").
+        rp(/\r\n/g,"\n").
+        rp(/\r/g,"\n");
 
       return x;
     };
@@ -82,7 +82,7 @@ Throwdown = (function(win) {
   T.Bl = function(x) {
     this.x = x;
     this.p = function() {
-      return this.x.replace(/^[ \t]+$/mg,"");
+      return this.x.rp(/^[ \t]+$/mg,"");
     };
   };
 
@@ -90,9 +90,9 @@ Throwdown = (function(win) {
     this.x = x;
     this.p = function() {
       var x = this.x.
-        replace(/\t(?=\t)/g, tab).
-        replace(/\t/g,"~A~B").
-        replace(/~B(.+?)~A/g, function(wM,m1,m2) {
+        rp(/\t(?=\t)/g, tab).
+        rp(/\t/g,"~A~B").
+        rp(/~B(.+?)~A/g, function(wM,m1,m2) {
           var lT = m1;
           var numSpaces = 4 - lT.length % 4;
 
@@ -101,8 +101,8 @@ Throwdown = (function(win) {
 
           return lT;
         }).
-        replace(/~A/g, tab).
-        replace(/~B/g,"");
+        rp(/~A/g, tab).
+        rp(/~B/g,"");
       return x;
     };
   };
@@ -143,13 +143,13 @@ Throwdown = (function(win) {
     	*/
 
       var x = this.x.
-        replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm, function(wM,m1) {
+        rp(/^(.+)[ \t]*\n=+[ \t]*\n+/gm, function(wM,m1) {
           return "<h1>" + sn.call(this, "inTH", m1) + "</h1>";
         }).
-        replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm, function(mF,m1) { 
+        rp(/^(.+)[ \t]*\n-+[ \t]*\n+/gm, function(mF,m1) { 
           return "<h2>" + sn.call(this, "inTH", m1) + "</h2>";
         }).
-        replace(/^(\#{1,6})[ \t]*(.+?)[ \t]*\#*\n+/gm,
+        rp(/^(\#{1,6})[ \t]*(.+?)[ \t]*\#*\n+/gm,
          function(wM,m1,m2) {
            var h = m1.length;
            return "<h" + h + ">" + sn.call(this, "inTH", m2) + "</h" + h + ">";

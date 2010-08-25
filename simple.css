@@ -1,21 +1,21 @@
 body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,Tahoma,Verdana,serif;}
 a {text-decoration:none;color:#3B6869;}
 a:hover {color:#125C00;}
-.cursor{cursor:hand;}
+.csr{cursor:hand;}
 .con{width:500px;margin:0 auto;}
 .bg{background-color:#ededed;}
 .gr {background-color: #93B30E;}
 .left { float:left; }
 .no_margin { margin:0;}
 .rlv {position:relative;}
-.home {color:#292CC9;}
-.card {
+.hm {color:#292CC9;}
+.ca {
   height:300px;
   padding:5px;
 }
 .table {display:table;}
 .fr { margin:15px 15px 0; }
-.blue {color:#87AFD9; }
+.blu {color:#87AFD9; }
 textarea {
   width:460px;
   height:100%;
@@ -39,7 +39,7 @@ textarea {
   width:470px;
   clear:left;
 }
-#pre_watermark {
+#wtr {
   position:absolute;top:40px;right:25px;color:#ccc;font-weight:bold;
 }
 #we, #sw, #sc {

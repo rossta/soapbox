@@ -166,7 +166,7 @@ Simple = (function(s, $, w) {
           t.display(parseInt($(this).html(), 10) - 1);
           return false;
         }).
-        dl(".home", "click", function() {
+        dl(".hm", "click", function() {
           return w.location.reload();
         });
       t.sx.
@@ -206,7 +206,7 @@ Simple = (function(s, $, w) {
       var t = this;
       $("<div></div>").
         attr("id", "slide_" + index).
-        attr("class", "slide card padding").
+        attr("class", "slide ca pdg").
         html(mkup(html)).
         appendTo(t.$pre).hide();
       $(ln).html(index + 1).appendTo(t.$pgs);
