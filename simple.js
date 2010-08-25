@@ -39,14 +39,14 @@ Simple = (function(s, $, w) {
       return this;
     },
     init: function() {
-      var self = this;
+      var t = this;
       this.archive = new S.Archive();
-      self.forEach("init");
+      t.forEach("init");
       $("a.toggle").bind("click", function() {
-        self.forEach("toggle");
+        t.forEach("toggle");
       });
       this.bind("toggle.smp", function() {
-        self.forEach("toggle");
+        t.forEach("toggle");
       });
     },
     tr: function(event, data) {
@@ -129,43 +129,43 @@ Simple = (function(s, $, w) {
       this.listen();
     },
     listen: function() {
-      var self = this;
+      var t = this;
       this.$sel.
         dl("textarea", "keyup change", function() {
           var $this = $(this),
               mk = $this.val();
               slideId = $this.attr("name");
           $("#" + slideId).html(mkup(mk));
-          self.sx.save(slideId.split("_")[1], mk);
+          t.sx.save(slideId.split("_")[1], mk);
         }).
         dl("#pre", "click", function() {
           $(this).next().find("textarea").focus();
         }).
         dl("a.pl", "click", function() {
-          self.sx.tr("pl.smp");
+          t.sx.tr("pl.smp");
           return false;
         }).
         dl("a.ins", "click", function() {
-          self.ins(self.$pre.children().length, "# New Slide");
+          t.ins(t.$pre.children().length, "# New Slide");
           return false;
         }).
         dl("a.new", "click", function() {
-          self.createNew();
+          t.createNew();
           return false;
         }).
         dl("#pgs a", "click", function() {
-          self.display(parseInt($(this).html(), 10) - 1);
+          t.display(parseInt($(this).html(), 10) - 1);
           return false;
         }).
         dl(".home", "click", function() {
           return w.location.reload();
         });
-      self.sx.
+      t.sx.
         bind("new.smp", function() {
-          self.createNew();
+          t.createNew();
         }).
         bind("edit.smp", function() {
-          self.load(self.sx.k);
+          t.load(t.sx.k);
         });
         
     },
@@ -176,45 +176,45 @@ Simple = (function(s, $, w) {
       return this.$sel.show();
     },
     createNew: function() {
-      var self = this, title = prompt("Save New Slideshow As...");
-      self.load(title);
-      self.$pre.empty();
-      self.$pgs.empty();
-      self.ins(0, "# New Slideshow");
-      self.show();
+      var t = this, title = prompt("Save New Slideshow As...");
+      t.load(title);
+      t.$pre.empty();
+      t.$pgs.empty();
+      t.ins(0, "# New Slideshow");
+      t.show();
     },
     display: function(index, value) {
-      var self = this, slideId = "slide_" + index;
-      value = value || self.sx.get(index);
+      var t = this, slideId = "slide_" + index;
+      value = value || t.sx.get(index);
       $("div.slide").hide();
       $("[id$=" + slideId +"]").show();
-      self.$pgs.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
-      self.$ta.attr("name", slideId).val(value);
-      self.$ta.change();
+      t.$pgs.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
+      t.$ta.attr("name", slideId).val(value);
+      t.$ta.change();
       return this;
     },
     ins: function(index, html) {
-      var self = this;
+      var t = this;
       $("<div></div>").
         attr("id", "slide_" + index).
         attr("class", "slide card padding").
         html(mkup(html)).
-        appendTo(self.$pre).hide();
-      $("<a href='#'></a>").html(index + 1).appendTo(self.$pgs);
-      self.sx.save(index, html);
-      self.display(index);
+        appendTo(t.$pre).hide();
+      $("<a href='#'></a>").html(index + 1).appendTo(t.$pgs);
+      t.sx.save(index, html);
+      t.display(index);
       return this;
     },
     toggle: function() {
       return this.$sel.toggle();
     },
     load: function(k) {
-      var self = this;
-      self.sx.load(k);
-      self.sx.all(function(data) {
-        self.ins(parseInt(data.num, 10), data.mk);
+      var t = this;
+      t.sx.load(k);
+      t.sx.all(function(data) {
+        t.ins(parseInt(data.num, 10), data.mk);
       });
-      self.display(0);
+      t.display(0);
     }
   };
 
@@ -231,22 +231,22 @@ Simple = (function(s, $, w) {
       this.listen();
     },
     listen: function() {
-      var self = this;
+      var t = this;
       this.$sel.dl("a.exit", "click", function() {
-        self.sx.tr("stop.smp");
+        t.sx.tr("stop.smp");
       });
-      self.sx.
+      t.sx.
         bind("pl.smp", function() {
-          self.pl();
+          t.pl();
         }).
         bind("loaded.smp", function(e, data) {
-          self.show();
+          t.show();
         }).
         bind("next.smp", function() {
-          self.next();
+          t.next();
         }).
         bind("prev.smp", function() {
-          self.prev();
+          t.prev();
         });
     },
     hide: function() {
@@ -262,29 +262,29 @@ Simple = (function(s, $, w) {
       return this.$sel.toggle();
     },
     pl: function() {
-      var self = this;
-      self.$screen.empty();
-      self.sx.all(function(data) {
+      var t = this;
+      t.$screen.empty();
+      t.sx.all(function(data) {
         $("<div></div>").
           attr("id", "simple" + data.slideId).
           html(mkup(data.mk)).
-          appendTo(self.$screen).hide();
+          appendTo(t.$screen).hide();
       });
-      self.$screen.children().addClass("slide").first().cell();
-      self.sx.tr("loaded.smp");
+      t.$screen.children().addClass("slide").first().cell();
+      t.sx.tr("loaded.smp");
     },
     next: function() {
-      var $next = this.$screen.children(":visible").hide().next();
+      var t = this, $next = t.$screen.children(":visible").hide().next();
       if ($next.length) $next.cell();
       else {
-        self.sx.tr("stop.smp").tr("toggle.smp");
+        t.sx.tr("stop.smp").tr("toggle.smp");
       }
     },
     prev: function() {
-      var $prev = this.$screen.children(":visible").hide().prev();
+      var t = this, $prev = t.$screen.children(":visible").hide().prev();
       if ($prev.length) $prev.cell();
       else {
-        self.sx.tr("stop.smp").tr("toggle.smp");
+        t.sx.tr("stop.smp").tr("toggle.smp");
       }
     }
   };
@@ -297,29 +297,29 @@ Simple = (function(s, $, w) {
   };
   S.We[pro] = {
     init: function() {
-      var self = this;
+      var t = this;
       this.show();
       this.$sel.
         dl("a.pl", "click", function() {
-          self.sx.load($(this).text());
-          self.hide();
-          self.sx.tr("edit.smp").tr("pl.smp");
+          t.sx.load($(this).text());
+          t.hide();
+          t.sx.tr("edit.smp").tr("pl.smp");
         });
     },
     hide: function() {
       return this.$sel.hide();
     },
     show: function() {
-      var self = this;
+      var t = this;
       this.sx.load();
       this.soapboxes = this.sx.rt("soapboxes");
       $.map(this.soapboxes, function(title) {
-        $("<a href='#'></a>").html(title).addClass("pl").appendTo(self.$screen);
+        $("<a href='#'></a>").html(title).addClass("pl").appendTo(t.$screen);
       });
-      $("<hr />").appendTo(self.$screen);
-      $("<a href='#'></a>").html("new").appendTo(self.$screen).click(function() {
-        self.sx.tr("new.smp");
-        self.hide();
+      $("<hr />").appendTo(t.$screen);
+      $("<a href='#'></a>").html("new").appendTo(t.$screen).click(function() {
+        t.sx.tr("new.smp");
+        t.hide();
       });
       return this.$sel.show();
     }
@@ -361,35 +361,35 @@ Simple = (function(s, $, w) {
       esc   : 27
     },
     init: function() {
-      var self = this,
-      ks = self.ks;
-      self.sx.
+      var t = this,
+      ks = t.ks;
+      t.sx.
         bind("pl.smp", function() {
-          self.context = self.SHOW;
+          t.context = t.SHOW;
         }).
         bind("stop.smp", function() {
-          self.context = self.EDIT;
+          t.context = t.EDIT;
         }).
         bind("keydown", function(e) {
           var k = e.keyCode;
-          switch (self.context) {
-            case self.EDIT:
+          switch (t.context) {
+            case t.EDIT:
               log(k);
               break;
-            case self.SHOW:
+            case t.SHOW:
               switch (k) {
                 case ks.space:
                   log("space");
                   break;
                 case ks.left:
-                  self.sx.tr("prev.smp");
+                  t.sx.tr("prev.smp");
                   break;
                 case ks.right:
-                  self.sx.tr("next.smp");
+                  t.sx.tr("next.smp");
                   break;
                 case ks.esc:
-                  self.sx.tr("stop.smp");
-                  self.sx.tr("toggle.smp");
+                  t.sx.tr("stop.smp");
+                  t.sx.tr("toggle.smp");
                   break;
                 default:
                   log(k);
