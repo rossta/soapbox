@@ -1,5 +1,6 @@
 body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,Tahoma,Verdana,serif;}
 a {text-decoration:none;}
+.cursor{cursor:hand;}
 .container{width:500px;margin:0 auto;}
 .bg{background-color:#ededed;}
 .gradient {background-color: #6DA23C;}
@@ -56,4 +57,6 @@ textarea {
 }
 #pagination a { padding:2px 8px; background-color: #ccc; float:left;}
 #pagination a.current { background-color: #efefef;}
+#welcome .screen { margin-left:2em;}
+#welcome a {display:block; margin:0 0 0.5em;}
 ul{text-align:left;margin: 1em 20%;}

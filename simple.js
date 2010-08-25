@@ -8,6 +8,7 @@ Simple = (function(s, $, win) {
       sandbox.
         add(S.Author).
         add(S.Slideshow).
+        add(S.Welcome).
         add(S.KeyListener).
         init();
       Simple.app = sandbox;
@@ -56,7 +57,9 @@ Simple = (function(s, $, win) {
       });
     },
     load: function(key) {
-      var slides = this.archive.retrieve(key);
+      key = key || "demo";
+      var slides = this.retrieve(key), 
+      soapboxes = this.retrieve("soapboxes");
       if (!slides) {
         slides = [];
         if (key == "demo") {
@@ -66,9 +69,16 @@ Simple = (function(s, $, win) {
           ];
         }
       }
+      if (!soapboxes) soapboxes = [key];
+      if ($.inArray(key, soapboxes) < 0) soapboxes.push(key); 
+
+      this.store("soapboxes", soapboxes);
       this.key = key;
       this.slides = slides;
       return slides;
+    },
+    retrieve: function(key) {
+      return this.archive.retrieve(key);
     },
     get: function(id) {
       return this.slides[id];
@@ -76,10 +86,10 @@ Simple = (function(s, $, win) {
     save: function(id, value) {
       log("Saving", id, value);
       this.slides[id] = value;
-      return this.store(this.slides);
+      return this.store(this.key, this.slides);
     },
-    store: function(data) {
-      return this.archive.store(data);
+    store: function(key, data) {
+      return this.archive.store(key, data);
     },
     all: function(callback) {
       var num = 0,
@@ -108,9 +118,8 @@ Simple = (function(s, $, win) {
   };
   S.Author[proto] = {
     init: function() {
+      this.hide();
       this.listen();
-      this.load("demo");
-      this.display(0);
     },
     listen: function() {
       var self = this;
@@ -145,7 +154,15 @@ Simple = (function(s, $, win) {
         delegate("#pagination a", "click", function() {
           self.display(parseInt($(this).html(), 10) - 1);
           return false;
+        }).
+        delegate(".home", "click", function() {
+          return window.location.reload();
         });
+      self.sandbox.
+        bind("edit.simple", function() {
+          self.load(self.sandbox.key);
+        });
+        
     },
     hide: function() {
       return this.$selector.hide();
@@ -184,6 +201,7 @@ Simple = (function(s, $, win) {
       self.sandbox.all(function(data) {
         self.insert(parseInt(data.num, 10), data.markdown);
       });
+      self.display(0);
     }
   };
 
@@ -191,7 +209,8 @@ Simple = (function(s, $, win) {
     selector = selector || "#slideshow";
     this.selector   = selector;
     this.$selector  = $(selector);
-    this.$screen    = $("#screen");
+    this.$screen    = this.$selector.find(".screen");
+    this.$exit      = this.$selector.find(".exit");
   };
   S.Slideshow[proto] = {
     init: function() {
@@ -218,12 +237,15 @@ Simple = (function(s, $, win) {
         });
     },
     hide: function() {
+      this.$exit.hide();
       return this.$selector.hide();
     },
     show: function() {
+      this.$exit.show();
       return this.$selector.show();
     },
     toggle: function() {
+      this.$exit.toggle();
       return this.$selector.toggle();
     },
     play: function() {
@@ -235,8 +257,8 @@ Simple = (function(s, $, win) {
           html(markup(data.markdown)).
           appendTo(self.$screen).hide();
       });
-      self.sandbox.trigger("loaded.simple");
       self.$screen.children().addClass("slide").first().cell();
+      self.sandbox.trigger("loaded.simple");
     },
     next: function() {
       var $next = this.$screen.children(":visible").hide().next();
@@ -253,6 +275,38 @@ Simple = (function(s, $, win) {
       }
     }
   };
+  S.Welcome = function(selector) {
+    selector = selector || "#welcome";
+    this.selector   = selector;
+    this.$selector  = $(selector);
+    this.$screen    = this.$selector.find(".screen");
+    this.soapboxes  = [];
+  };
+  S.Welcome[proto] = {
+    init: function() {
+      var self = this;
+      this.show();
+      this.$selector.
+        delegate("a", "click", function() {
+          self.sandbox.load($(this).text());
+          self.hide();
+          self.sandbox.trigger("edit.simple").trigger("play.simple");
+        });
+    },
+    hide: function() {
+      return this.$selector.hide();
+    },
+    show: function() {
+      var self = this;
+      this.sandbox.load();
+      this.soapboxes = this.sandbox.retrieve("soapboxes");
+      $.map(this.soapboxes, function(title) {
+        $("<a href='#'></a>").html(title).appendTo(self.$screen);
+      });
+      return this.$selector.show();
+    }
+  };
+  
   S.Archive = function() {
     this.db = S.Archive.connection;
   };
@@ -302,8 +356,17 @@ Simple = (function(s, $, win) {
           var key = e.keyCode;
           switch (self.context) {
             case self.EDIT:
-              log("keydown while editing");
-              break;
+              switch (key) {
+                case keys.left:
+                  self.sandbox.trigger("prev.simple");
+                  break;
+                case keys.right:
+                  self.sandbox.trigger("next.simple");
+                  break;
+                default:
+                  log(key);
+                  break;
+              }
             case self.SHOW:
               switch (key) {
                 case keys.space:
