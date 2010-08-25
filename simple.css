@@ -9,6 +9,7 @@ a {text-decoration:none;}
   height:300px;
   padding:5px;
 }
+.table {display:table;}
 .frame { margin:15px 15px 0; }
 .blue {color:#87AFD9; }
 textarea {
@@ -20,11 +21,12 @@ textarea {
   font-size:0.9em;
   font-family:Courier, monospace;
 }
-.slide {
+.slide,.cell {
   text-align:center;
   display:table-cell;
   vertical-align:middle;
 }
+#menu .cell {padding:0 0.5em 0 0;}
 .white {
   background-color:white;
 }
@@ -52,5 +54,6 @@ textarea {
   bottom: 1em;
   right: 1em;
 }
-#pagination a { padding:2px; background-color: #ccc;}
+#pagination a { padding:2px 8px; background-color: #ccc; float:left;}
 #pagination a.current { background-color: #efefef;}
+ul{text-align:left;margin: 1em 20%;}
