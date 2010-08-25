@@ -146,12 +146,7 @@ Simple = (function(s, $, win) {
           return false;
         }).
         delegate("a.new", "click", function() {
-          var title = prompt("Save New Slideshow As...");
-          self.$preview.empty();
-          self.$paginate.empty();
-          self.load(title);
-          self.insert(0, "# New Slideshow");
-          self.show();
+          self.newSoapbox();
           return false;
         }).
         delegate("#pagination a", "click", function() {
@@ -162,6 +157,9 @@ Simple = (function(s, $, win) {
           return window.location.reload();
         });
       self.sandbox.
+        bind("new.simple", function() {
+          self.createNew();
+        }).
         bind("edit.simple", function() {
           self.load(self.sandbox.key);
         });
@@ -172,6 +170,14 @@ Simple = (function(s, $, win) {
     },
     show: function() {
       return this.$selector.show();
+    },
+    createNew: function() {
+      var self = this, title = prompt("Save New Slideshow As...");
+      self.load(title);
+      self.$preview.empty();
+      self.$paginate.empty();
+      self.insert(0, "# New Slideshow");
+      self.show();
     },
     display: function(index, value) {
       var self = this, slideId = "slide_" + index;
@@ -290,7 +296,7 @@ Simple = (function(s, $, win) {
       var self = this;
       this.show();
       this.$selector.
-        delegate("a", "click", function() {
+        delegate("a.play", "click", function() {
           self.sandbox.load($(this).text());
           self.hide();
           self.sandbox.trigger("edit.simple").trigger("play.simple");
@@ -304,7 +310,12 @@ Simple = (function(s, $, win) {
       this.sandbox.load();
       this.soapboxes = this.sandbox.retrieve("soapboxes");
       $.map(this.soapboxes, function(title) {
-        $("<a href='#'></a>").html(title).appendTo(self.$screen);
+        $("<a href='#'></a>").html(title).addClass("play").appendTo(self.$screen);
+      });
+      $("<hr />").appendTo(self.$screen);
+      $("<a href='#'></a>").html("new").appendTo(self.$screen).click(function() {
+        self.sandbox.trigger("new.simple");
+        self.hide();
       });
       return this.$selector.show();
     }

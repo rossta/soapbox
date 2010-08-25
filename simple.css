@@ -1,5 +1,6 @@
 body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,Tahoma,Verdana,serif;}
-a {text-decoration:none;}
+a {text-decoration:none;color:#3B6869;}
+a:hover {color:#125C00;}
 .cursor{cursor:hand;}
 .container{width:500px;margin:0 auto;}
 .bg{background-color:#ededed;}
