@@ -67,13 +67,13 @@ Simple = (function(s, $, w) {
     },
     lo: function(k) {
       k = k || "demo";
-      var t = this, slides = t.rt(k), 
+      var t = this, sls = t.rt(k), 
       spb = t.rt("spb");
-      if (!slides) {
-        slides = [];
+      if (!sls) {
+        sls = [];
         if (k == "demo") {
-          slides = [
-          "# Create slides", 
+          sls = [
+          "# Create sls", 
           "with text",
           "<h2>html</h2>",
           "# and (some) markdown",
@@ -86,8 +86,8 @@ Simple = (function(s, $, w) {
 
       t.store("spb", spb);
       t.k = k;
-      t.s = slides;
-      return slides;
+      t.s = sls;
+      return sls;
     },
     rt: function(k) {
       return this.archive.rt(k);
@@ -143,9 +143,9 @@ Simple = (function(s, $, w) {
         dl("textarea", "keyup change", function() {
           var $this = $(this),
               mk = $this.val();
-              slideId = $this.attr("name");
-          $("#" + slideId).html(mkup(mk));
-          t.sx.save(slideId.split("_")[1], mk);
+              slId = $this.attr("name");
+          $("#" + slId).html(mkup(mk));
+          t.sx.save(slId.split("_")[1], mk);
         }).
         dl("#pre", "click", function() {
           $(this).nx().find("textarea").focus();
@@ -193,20 +193,20 @@ Simple = (function(s, $, w) {
       t.show();
     },
     display: function(index, value) {
-      var t = this, slideId = "slide_" + index;
+      var t = this, slId = "sl_" + index;
       value = value || t.sx.get(index);
-      $("div.slide").hide();
-      $("[id$=" + slideId +"]").show();
-      t.$pgs.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
-      t.$ta.attr("name", slideId).val(value);
+      $("div.sl").hide();
+      $("[id$=" + slId +"]").show();
+      t.$pgs.children().removeClass("cur").filter(":eq("+ index+")").addClass("cur");
+      t.$ta.attr("name", slId).val(value);
       t.$ta.change();
       return t;
     },
     ins: function(index, html) {
       var t = this;
       $("<div></div>").
-        attr("id", "slide_" + index).
-        attr("class", "slide ca pdg").
+        attr("id", "sl_" + index).
+        attr("class", "sl ca pdg").
         html(mkup(html)).
         appendTo(t.$pre).hide();
       $(ln).html(index + 1).appendTo(t.$pgs);
@@ -277,11 +277,10 @@ Simple = (function(s, $, w) {
       t.$sc.empty();
       t.sx.all(function(data) {
         $("<div></div>").
-          attr("id", "simple" + data.slideId).
           html(mkup(data.mk)).
           appendTo(t.$sc).hide();
       });
-      t.$sc.children().addClass("slide").first().cl();
+      t.$sc.children().addClass("sl").first().cl();
       t.sx.tr("loed.smp");
     },
     nx: function() {

@@ -1,4 +1,4 @@
-body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,Tahoma,Verdana,serif;}
+body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,sans-serif;}
 a {text-decoration:none;color:#3B6869;}
 a:hover {color:#125C00;}
 .csr{cursor:hand;}
@@ -6,7 +6,6 @@ a:hover {color:#125C00;}
 .bg{background-color:#ededed;}
 .gr {background-color: #93B30E;}
 .left { float:left; }
-.no_margin { margin:0;}
 .rlv {position:relative;}
 .hm {color:#292CC9;}
 .ca {
@@ -25,7 +24,7 @@ textarea {
   font-size:0.9em;
   font-family:Courier, monospace;
 }
-.slide,.cl {
+.sl,.cl {
   text-align:center;
   display:table-cell;
   vertical-align:middle;
@@ -64,7 +63,7 @@ textarea {
 }
 #pgs { z-index:1;}
 #pgs a { padding:2px 8px; background-color: #ccc; float:left;}
-#pgs a.current { background-color: #efefef;}
+#pgs a.cur { background-color: #efefef;}
 #we .sc { margin-left:2em;}
 #we a {display:block; margin:0 0 0.5em;}
 ul{text-align:left;margin: 1em 20%;}
