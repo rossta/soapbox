@@ -64,8 +64,11 @@ Simple = (function(s, $, win) {
         slides = [];
         if (key == "demo") {
           slides = [
-          "# Simply slides", 
-          "# Using markdown"
+          "# Create slides", 
+          "with text",
+          "<h2>html</h2>",
+          "# and (some) markdown",
+          "# Any questions?"
           ];
         }
       }
