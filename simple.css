@@ -7,6 +7,7 @@ a:hover {color:#125C00;}
 .gradient {background-color: #93B30E;}
 .left { float:left; }
 .no_margin { margin:0;}
+.relative {position:relative;}
 .card {
   height:300px;
   padding:5px;
@@ -35,6 +36,10 @@ textarea {
 #preview {
   display:table;
   width:470px;
+  clear:left;
+}
+#preview_watermark {
+  position:absolute;top:40px;right:25px;color:#ccc;font-weight:bold;
 }
 #welcome, #slideshow, #screen {
   left:0;

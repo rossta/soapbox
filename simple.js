@@ -146,7 +146,7 @@ Simple = (function(s, $, win) {
           return false;
         }).
         delegate("a.new", "click", function() {
-          self.newSoapbox();
+          self.createNew();
           return false;
         }).
         delegate("#pagination a", "click", function() {
