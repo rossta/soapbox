@@ -1,25 +1,27 @@
 Throwdown = (function(win) {
   var T = function(x) {
-    this.x = x;
+    String.prototype.rp = String.prototype.replace;
+    var s = this;
+    s.x = x;
 
-    this.toH = function() {
-      var x;
+    s.toH = function() {
+      var t = this, x;
       //replaceSpCharacter
-      x = this.sn("rSC", x);
+      x = t.sn("rSC", x);
       //padWithNewLines
-      x = this.sn("pWNL", x);
+      x = t.sn("pWNL", x);
       //replaceTabs
-      x = this.sn("rT", x);
+      x = t.sn("rT", x);
       //replaceBlankLines
-      x = this.sn("rBL", x);
+      x = t.sn("rBL", x);
       //headersToHtml
-      x = this.sn("hTH", x);
+      x = t.sn("hTH", x);
 
       return x;
     };
 
-    this.sn = function() {
-      return sn.apply(this, arguments);
+    s.sn = function() {
+      return sn.apply(s, arguments);
     };
 
   },
@@ -31,7 +33,7 @@ Throwdown = (function(win) {
     var args  = Array[pro].slice.call(arguments, 0),
     fn    = args.shift();
     try {
-      return prt[fn].apply(this, args).process();
+      return prt[fn].apply(this, args).p();
     } catch(e) {
       throw "Error '" + fn + "'";
     }
@@ -59,7 +61,7 @@ Throwdown = (function(win) {
 
   T.Sp = function(x) {
     this.x = x;
-    this.process = function() {
+    this.p = function() {
       var x = this.x.
         replace(/~/g,"~T").
         replace(/\$/g,"~D").
@@ -72,32 +74,32 @@ Throwdown = (function(win) {
 
   T.Pd = function(x) {
     this.x = x;
-    this.process = function() {
+    this.p = function() {
       return "\n\n" + this.x + "\n\n";
     };
   };
 
   T.Bl = function(x) {
     this.x = x;
-    this.process = function() {
+    this.p = function() {
       return this.x.replace(/^[ \t]+$/mg,"");
     };
   };
 
   T.Tb = function(x) {
     this.x = x;
-    this.process = function() {
+    this.p = function() {
       var x = this.x.
         replace(/\t(?=\t)/g, tab).
         replace(/\t/g,"~A~B").
-        replace(/~B(.+?)~A/g, function(wholeMatch,m1,m2) {
-          var leadingText = m1;
-          var numSpaces = 4 - leadingText.length % 4;
+        replace(/~B(.+?)~A/g, function(wM,m1,m2) {
+          var lT = m1;
+          var numSpaces = 4 - lT.length % 4;
 
           // there *must* be a better way to do this:
-          for (var i=0; i<numSpaces; i++) leadingText+=" ";
+          for (var i=0; i<numSpaces; i++) lT+=" ";
 
-          return leadingText;
+          return lT;
         }).
         replace(/~A/g, tab).
         replace(/~B/g,"");
@@ -107,7 +109,7 @@ Throwdown = (function(win) {
 
   T.Hd = function(x) {
     this.x = x;
-    this.process = function() {
+    this.p = function() {
       // Sex-style headers:
     	//	Header 1
     	//	========
@@ -141,14 +143,14 @@ Throwdown = (function(win) {
     	*/
 
       var x = this.x.
-        replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm, function(wholeMatch,m1) {
+        replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm, function(wM,m1) {
           return "<h1>" + sn.call(this, "inTH", m1) + "</h1>";
         }).
-        replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm, function(matchFound,m1) { 
+        replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm, function(mF,m1) { 
           return "<h2>" + sn.call(this, "inTH", m1) + "</h2>";
         }).
         replace(/^(\#{1,6})[ \t]*(.+?)[ \t]*\#*\n+/gm,
-         function(wholeMatch,m1,m2) {
+         function(wM,m1,m2) {
            var h = m1.length;
            return "<h" + h + ">" + sn.call(this, "inTH", m2) + "</h" + h + ">";
          });
@@ -159,10 +161,10 @@ Throwdown = (function(win) {
   
   T.In = function(x) {
     this.x = x;
-    this.process = function() {
+    this.p = function() {
       return this.x;
     };
-  }
+  };
 
   win.throwdown = function(x) {
     return new T(x);

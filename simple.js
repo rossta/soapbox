@@ -8,6 +8,7 @@ Simple = (function(s, $, w) {
   var S = s,
   pro = "prototype",
   doc = document,
+  ln = "<a href='#'></a>",
   methods = {
     init: function() {
       var sx = new S.Sx();
@@ -22,8 +23,9 @@ Simple = (function(s, $, w) {
     }
   },
   log = function() {
-    if (w.console && w.console.log && typeof w.console.log.apply == 'function') {
-      w.console.log.apply(w.console, arguments);
+    var c = w.console;
+    if (c && c.log && typeof c.log.apply == 'function') {
+      c.log.apply(c, arguments);
     }
   },
   mkup = function(mk) {
@@ -63,10 +65,10 @@ Simple = (function(s, $, w) {
         if (typeof m[fn] == 'function') m[fn]();
       });
     },
-    load: function(k) {
+    lo: function(k) {
       k = k || "demo";
       var t = this, slides = t.rt(k), 
-      soapboxes = t.rt("soapboxes");
+      spb = t.rt("spb");
       if (!slides) {
         slides = [];
         if (k == "demo") {
@@ -79,10 +81,10 @@ Simple = (function(s, $, w) {
           ];
         }
       }
-      if (!soapboxes) soapboxes = [k];
-      if ($.inArray(k, soapboxes) < 0) soapboxes.push(k); 
+      if (!spb) spb = [k];
+      if ($.inArray(k, spb) < 0) spb.push(k); 
 
-      t.store("soapboxes", soapboxes);
+      t.store("spb", spb);
       t.k = k;
       t.s = slides;
       return slides;
@@ -156,7 +158,7 @@ Simple = (function(s, $, w) {
           t.ins(t.$pre.children().length, "# New Slide");
           return false;
         }).
-        dl("a.new", "click", function() {
+        dl("a.nw", "click", function() {
           t.createNew();
           return false;
         }).
@@ -168,11 +170,11 @@ Simple = (function(s, $, w) {
           return w.location.reload();
         });
       t.sx.
-        bind("new.smp", function() {
+        bind("nw.smp", function() {
           t.createNew();
         }).
         bind("edit.smp", function() {
-          t.load(t.sx.k);
+          t.lo(t.sx.k);
         });
         
     },
@@ -184,7 +186,7 @@ Simple = (function(s, $, w) {
     },
     createNew: function() {
       var t = this, title = prompt("Save New Slideshow As...");
-      t.load(title);
+      t.lo(title);
       t.$pre.empty();
       t.$pgs.empty();
       t.ins(0, "# New Slideshow");
@@ -207,7 +209,7 @@ Simple = (function(s, $, w) {
         attr("class", "slide card padding").
         html(mkup(html)).
         appendTo(t.$pre).hide();
-      $("<a href='#'></a>").html(index + 1).appendTo(t.$pgs);
+      $(ln).html(index + 1).appendTo(t.$pgs);
       t.sx.save(index, html);
       t.display(index);
       return t;
@@ -215,9 +217,9 @@ Simple = (function(s, $, w) {
     tg: function() {
       return this.$sel.tg();
     },
-    load: function(k) {
+    lo: function(k) {
       var t = this;
-      t.sx.load(k);
+      t.sx.lo(k);
       t.sx.all(function(data) {
         t.ins(parseInt(data.num, 10), data.mk);
       });
@@ -248,7 +250,7 @@ Simple = (function(s, $, w) {
         bind("pl.smp", function() {
           t.pl();
         }).
-        bind("loaded.smp", function(e, data) {
+        bind("loed.smp", function(e, data) {
           t.show();
         }).
         bind("nx.smp", function() {
@@ -280,7 +282,7 @@ Simple = (function(s, $, w) {
           appendTo(t.$sc).hide();
       });
       t.$sc.children().addClass("slide").first().cl();
-      t.sx.tr("loaded.smp");
+      t.sx.tr("loed.smp");
     },
     nx: function() {
       var t = this, $nx = t.$sc.children(":visible").hide().nx();
@@ -303,7 +305,7 @@ Simple = (function(s, $, w) {
     t.sel   = sel;
     t.$sel  = $(sel);
     t.$sc    = t.$sel.find(".sc");
-    t.soapboxes  = [];
+    t.spb  = [];
   };
   S.We[pro] = {
     init: function() {
@@ -311,7 +313,7 @@ Simple = (function(s, $, w) {
       t.show();
       t.$sel.
         dl("a.pl", "click", function() {
-          t.sx.load($(this).text());
+          t.sx.lo($(this).text());
           t.hide();
           t.sx.tr("edit.smp").tr("pl.smp");
         });
@@ -321,14 +323,14 @@ Simple = (function(s, $, w) {
     },
     show: function() {
       var t = this;
-      t.sx.load();
-      t.soapboxes = t.sx.rt("soapboxes");
-      $.map(t.soapboxes, function(title) {
-        $("<a href='#'></a>").html(title).addClass("pl").appendTo(t.$sc);
+      t.sx.lo();
+      t.spb = t.sx.rt("spb");
+      $.map(t.spb, function(title) {
+        $(ln).html(title).addClass("pl").appendTo(t.$sc);
       });
       $("<hr />").appendTo(t.$sc);
-      $("<a href='#'></a>").html("new").appendTo(t.$sc).click(function() {
-        t.sx.tr("new.smp");
+      $(ln).html("new").appendTo(t.$sc).click(function() {
+        t.sx.tr("nw.smp");
         t.hide();
       });
       return t.$sel.show();
