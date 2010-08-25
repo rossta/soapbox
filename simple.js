@@ -1,17 +1,19 @@
 Simple = (function(s, $, w) {
   $.fn.dl = $.fn.delegate;
+  $.fn.tr = $.fn.trigger;
   
   var S = s,
   pro = "prototype",
+  doc = document,
   methods = {
-    generate: function() {
-      var author, slideshow, s;
-      sx = new S.Sandbox();
+    init: function() {
+      var au, sw, s;
+      sx = new S.Sx();
       sx.
-        add(S.Author).
-        add(S.Slideshow).
-        add(S.Welcome).
-        add(S.KeyListener).
+        add(S.Au).
+        add(S.Sw).
+        add(S.We).
+        add(S.Ky).
         init();
       Simple.app = sx;
       return sx;
@@ -22,14 +24,14 @@ Simple = (function(s, $, w) {
       w.console.log.apply(w.console, arguments);
     }
   },
-  markup = function(mk) {
+  mkup = function(mk) {
     return throwdown(mk).toH();
   };
 
-  S.Sandbox = function() {
+  S.Sx = function() {
     this.ms = [];
   };
-  S.Sandbox[pro] = {
+  S.Sx[pro] = {
     add: function(klass) {
       var m = new klass();
       m.sx = this;
@@ -43,28 +45,28 @@ Simple = (function(s, $, w) {
       $("a.toggle").bind("click", function() {
         self.forEach("toggle");
       });
-      this.bind("toggle.simple", function() {
+      this.bind("toggle.smp", function() {
         self.forEach("toggle");
       });
     },
-    trigger: function(event, data) {
-      return $(document).trigger(event, data);
+    tr: function(event, data) {
+      return $(doc).tr(event, data);
     },
     bind: function(event, callback) {
-      return $(document).bind(event, callback);
+      return $(doc).bind(event, callback);
     },
     forEach: function(fn) {
       $.map(this.ms, function(m) {
         if (typeof m[fn] == 'function') m[fn]();
       });
     },
-    load: function(key) {
-      key = key || "demo";
-      var slides = this.retrieve(key), 
-      soapboxes = this.retrieve("soapboxes");
+    load: function(k) {
+      k = k || "demo";
+      var slides = this.rt(k), 
+      soapboxes = this.rt("soapboxes");
       if (!slides) {
         slides = [];
-        if (key == "demo") {
+        if (k == "demo") {
           slides = [
           "# Create slides", 
           "with text",
@@ -74,16 +76,16 @@ Simple = (function(s, $, w) {
           ];
         }
       }
-      if (!soapboxes) soapboxes = [key];
-      if ($.inArray(key, soapboxes) < 0) soapboxes.push(key); 
+      if (!soapboxes) soapboxes = [k];
+      if ($.inArray(k, soapboxes) < 0) soapboxes.push(k); 
 
       this.store("soapboxes", soapboxes);
-      this.key = key;
+      this.k = k;
       this.s = slides;
       return slides;
     },
-    retrieve: function(key) {
-      return this.archive.retrieve(key);
+    rt: function(k) {
+      return this.archive.rt(k);
     },
     get: function(id) {
       return this.s[id];
@@ -91,10 +93,10 @@ Simple = (function(s, $, w) {
     save: function(id, value) {
       log("Saving", id, value);
       this.s[id] = value;
-      return this.store(this.key, this.s);
+      return this.store(this.k, this.s);
     },
-    store: function(key, data) {
-      return this.archive.store(key, data);
+    store: function(k, data) {
+      return this.archive.store(k, data);
     },
     all: function(callback) {
       var num = 0,
@@ -113,15 +115,15 @@ Simple = (function(s, $, w) {
     }
   };
 
-  S.Author = function(sel) {
-    sel = sel || "#author";
+  S.Au = function(sel) {
+    sel = sel || "#au";
     this.sel   = sel;
     this.$sel  = $(sel);
     this.$pre   = this.$sel.find('#pre');
-    this.$textarea  = this.$sel.find('textarea');
-    this.$paginate  = this.$sel.find('#pagination');
+    this.$ta  = this.$sel.find('textarea');
+    this.$pgs  = this.$sel.find('#pgs');
   };
-  S.Author[pro] = {
+  S.Au[pro] = {
     init: function() {
       this.hide();
       this.listen();
@@ -133,14 +135,14 @@ Simple = (function(s, $, w) {
           var $this = $(this),
               mk = $this.val();
               slideId = $this.attr("name");
-          $("#" + slideId).html(markup(mk));
+          $("#" + slideId).html(mkup(mk));
           self.sx.save(slideId.split("_")[1], mk);
         }).
         dl("#pre", "click", function() {
           $(this).next().find("textarea").focus();
         }).
         dl("a.pl", "click", function() {
-          self.sx.trigger("pl.simple");
+          self.sx.tr("pl.smp");
           return false;
         }).
         dl("a.ins", "click", function() {
@@ -151,7 +153,7 @@ Simple = (function(s, $, w) {
           self.createNew();
           return false;
         }).
-        dl("#pagination a", "click", function() {
+        dl("#pgs a", "click", function() {
           self.display(parseInt($(this).html(), 10) - 1);
           return false;
         }).
@@ -159,11 +161,11 @@ Simple = (function(s, $, w) {
           return w.location.reload();
         });
       self.sx.
-        bind("new.simple", function() {
+        bind("new.smp", function() {
           self.createNew();
         }).
-        bind("edit.simple", function() {
-          self.load(self.sx.key);
+        bind("edit.smp", function() {
+          self.load(self.sx.k);
         });
         
     },
@@ -177,7 +179,7 @@ Simple = (function(s, $, w) {
       var self = this, title = prompt("Save New Slideshow As...");
       self.load(title);
       self.$pre.empty();
-      self.$paginate.empty();
+      self.$pgs.empty();
       self.ins(0, "# New Slideshow");
       self.show();
     },
@@ -186,9 +188,9 @@ Simple = (function(s, $, w) {
       value = value || self.sx.get(index);
       $("div.slide").hide();
       $("[id$=" + slideId +"]").show();
-      self.$paginate.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
-      self.$textarea.attr("name", slideId).val(value);
-      self.$textarea.change();
+      self.$pgs.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
+      self.$ta.attr("name", slideId).val(value);
+      self.$ta.change();
       return this;
     },
     ins: function(index, html) {
@@ -196,9 +198,9 @@ Simple = (function(s, $, w) {
       $("<div></div>").
         attr("id", "slide_" + index).
         attr("class", "slide card padding").
-        html(markup(html)).
+        html(mkup(html)).
         appendTo(self.$pre).hide();
-      $("<a href='#'></a>").html(index + 1).appendTo(self.$paginate);
+      $("<a href='#'></a>").html(index + 1).appendTo(self.$pgs);
       self.sx.save(index, html);
       self.display(index);
       return this;
@@ -206,9 +208,9 @@ Simple = (function(s, $, w) {
     toggle: function() {
       return this.$sel.toggle();
     },
-    load: function(key) {
+    load: function(k) {
       var self = this;
-      self.sx.load(key);
+      self.sx.load(k);
       self.sx.all(function(data) {
         self.ins(parseInt(data.num, 10), data.mk);
       });
@@ -216,14 +218,14 @@ Simple = (function(s, $, w) {
     }
   };
 
-  S.Slideshow = function(sel) {
-    sel = sel || "#slideshow";
+  S.Sw = function(sel) {
+    sel = sel || "#sw";
     this.sel   = sel;
     this.$sel  = $(sel);
     this.$screen    = this.$sel.find(".screen");
     this.$exit      = this.$sel.find(".exit");
   };
-  S.Slideshow[pro] = {
+  S.Sw[pro] = {
     init: function() {
       this.hide();
       this.listen();
@@ -231,19 +233,19 @@ Simple = (function(s, $, w) {
     listen: function() {
       var self = this;
       this.$sel.dl("a.exit", "click", function() {
-        self.sx.trigger("stop.simple");
+        self.sx.tr("stop.smp");
       });
       self.sx.
-        bind("pl.simple", function() {
+        bind("pl.smp", function() {
           self.pl();
         }).
-        bind("loaded.simple", function(e, data) {
+        bind("loaded.smp", function(e, data) {
           self.show();
         }).
-        bind("next.simple", function() {
+        bind("next.smp", function() {
           self.next();
         }).
-        bind("prev.simple", function() {
+        bind("prev.smp", function() {
           self.prev();
         });
     },
@@ -265,35 +267,35 @@ Simple = (function(s, $, w) {
       self.sx.all(function(data) {
         $("<div></div>").
           attr("id", "simple" + data.slideId).
-          html(markup(data.mk)).
+          html(mkup(data.mk)).
           appendTo(self.$screen).hide();
       });
       self.$screen.children().addClass("slide").first().cell();
-      self.sx.trigger("loaded.simple");
+      self.sx.tr("loaded.smp");
     },
     next: function() {
       var $next = this.$screen.children(":visible").hide().next();
       if ($next.length) $next.cell();
       else {
-        self.sx.trigger("stop.simple").trigger("toggle.simple");
+        self.sx.tr("stop.smp").tr("toggle.smp");
       }
     },
     prev: function() {
       var $prev = this.$screen.children(":visible").hide().prev();
       if ($prev.length) $prev.cell();
       else {
-        self.sx.trigger("stop.simple").trigger("toggle.simple");
+        self.sx.tr("stop.smp").tr("toggle.smp");
       }
     }
   };
-  S.Welcome = function(sel) {
+  S.We = function(sel) {
     sel = sel || "#welcome";
     this.sel   = sel;
     this.$sel  = $(sel);
     this.$screen    = this.$sel.find(".screen");
     this.soapboxes  = [];
   };
-  S.Welcome[pro] = {
+  S.We[pro] = {
     init: function() {
       var self = this;
       this.show();
@@ -301,7 +303,7 @@ Simple = (function(s, $, w) {
         dl("a.pl", "click", function() {
           self.sx.load($(this).text());
           self.hide();
-          self.sx.trigger("edit.simple").trigger("pl.simple");
+          self.sx.tr("edit.smp").tr("pl.smp");
         });
     },
     hide: function() {
@@ -310,13 +312,13 @@ Simple = (function(s, $, w) {
     show: function() {
       var self = this;
       this.sx.load();
-      this.soapboxes = this.sx.retrieve("soapboxes");
+      this.soapboxes = this.sx.rt("soapboxes");
       $.map(this.soapboxes, function(title) {
         $("<a href='#'></a>").html(title).addClass("pl").appendTo(self.$screen);
       });
       $("<hr />").appendTo(self.$screen);
       $("<a href='#'></a>").html("new").appendTo(self.$screen).click(function() {
-        self.sx.trigger("new.simple");
+        self.sx.tr("new.smp");
         self.hide();
       });
       return this.$sel.show();
@@ -327,13 +329,13 @@ Simple = (function(s, $, w) {
     this.db = S.Archive.connection;
   };
   S.Archive[pro] = {
-    retrieve: function(key) {
-      var s = this.db[key];
+    rt: function(k) {
+      var s = this.db[k];
       if (s) return JSON.parse(s);
       else return null;
     },
-    store: function(key, data) {
-      this.db[key] = JSON.stringify(data);
+    store: function(k, data) {
+      this.db[k] = JSON.stringify(data);
       return this;
     },
     clear: function() {
@@ -346,13 +348,13 @@ Simple = (function(s, $, w) {
   };
   S.Archive.connection = w.localStorage || {};
 
-  S.KeyListener = function() {
+  S.Ky = function() {
     this.EDIT = "edit";
     this.SHOW = "show";
     this.context = this.EDIT;
   };
-  S.KeyListener[pro] = {
-    keys: {
+  S.Ky[pro] = {
+    ks: {
       space : 32,
       left  : 37,
       right : 39,
@@ -360,46 +362,37 @@ Simple = (function(s, $, w) {
     },
     init: function() {
       var self = this,
-      keys = self.keys;
+      ks = self.ks;
       self.sx.
-        bind("pl.simple", function() {
+        bind("pl.smp", function() {
           self.context = self.SHOW;
         }).
-        bind("stop.simple", function() {
+        bind("stop.smp", function() {
           self.context = self.EDIT;
         }).
         bind("keydown", function(e) {
-          var key = e.keyCode;
+          var k = e.keyCode;
           switch (self.context) {
             case self.EDIT:
-              switch (key) {
-                case keys.left:
-                  self.sx.trigger("prev.simple");
-                  break;
-                case keys.right:
-                  self.sx.trigger("next.simple");
-                  break;
-                default:
-                  log(key);
-                  break;
-              }
+              log(k);
+              break;
             case self.SHOW:
-              switch (key) {
-                case keys.space:
+              switch (k) {
+                case ks.space:
                   log("space");
                   break;
-                case keys.left:
-                  self.sx.trigger("prev.simple");
+                case ks.left:
+                  self.sx.tr("prev.smp");
                   break;
-                case keys.right:
-                  self.sx.trigger("next.simple");
+                case ks.right:
+                  self.sx.tr("next.smp");
                   break;
-                case keys.esc:
-                  self.sx.trigger("stop.simple");
-                  self.sx.trigger("toggle.simple");
+                case ks.esc:
+                  self.sx.tr("stop.smp");
+                  self.sx.tr("toggle.smp");
                   break;
                 default:
-                  log(key);
+                  log(k);
                   break;
               }
               break;

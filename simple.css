@@ -2,12 +2,12 @@ body {font-size: 1.5em;color:#333;font-family:"Helvetica Neue",Helvetica,Tahoma,
 a {text-decoration:none;color:#3B6869;}
 a:hover {color:#125C00;}
 .cursor{cursor:hand;}
-.container{width:500px;margin:0 auto;}
+.con{width:500px;margin:0 auto;}
 .bg{background-color:#ededed;}
 .gr {background-color: #93B30E;}
 .left { float:left; }
 .no_margin { margin:0;}
-.relative {position:relative;}
+.rlv {position:relative;}
 .home {color:#292CC9;}
 .card {
   height:300px;
@@ -42,12 +42,12 @@ textarea {
 #pre_watermark {
   position:absolute;top:40px;right:25px;color:#ccc;font-weight:bold;
 }
-#welcome, #slideshow, #screen {
+#welcome, #sw, #screen {
   left:0;
   top:0;
   width:100%;
 }
-#welcome, #slideshow {
+#welcome, #sw {
   height:100%;
   position:fixed;
 }
@@ -57,13 +57,14 @@ textarea {
   background-color:none;
   position:absolute;
 }
-#slideshow a.exit {
+#sw a.exit {
   position: fixed;
   bottom: 1em;
   right: 1em;
 }
-#pagination a { padding:2px 8px; background-color: #ccc; float:left;}
-#pagination a.current { background-color: #efefef;}
+#pgs { z-index:1;}
+#pgs a { padding:2px 8px; background-color: #ccc; float:left;}
+#pgs a.current { background-color: #efefef;}
 #welcome .screen { margin-left:2em;}
 #welcome a {display:block; margin:0 0 0.5em;}
 ul{text-align:left;margin: 1em 20%;}
