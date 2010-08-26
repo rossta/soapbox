@@ -2,7 +2,7 @@ Simple = (function(s, $, win) {
   var S = s,
   pro = "prototype",
   methods = {
-    generate: function() {
+    init: function() {
       var author, slideshow, s;
       sandbox = new S.Sandbox();
       sandbox.
