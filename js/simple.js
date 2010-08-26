@@ -131,20 +131,20 @@ Simple = (function(s, $, win) {
       this.listen();
     },
     listen: function() {
-      var self = this;
+      var self = this, app = self.sandbox;
       self.$selector.
         delegate("textarea", "keyup change", function() {
           var $this = $(this),
               markdown = $this.val();
               slideId = $this.attr("name");
           $("#" + slideId).html(markup(markdown));
-          self.sandbox.save(slideId.split("_")[1], markdown);
+          app.save(slideId.split("_")[1], markdown);
         }).
         delegate("#preview", "click", function() {
           $(this).next().find("textarea").focus();
         }).
         delegate("a.play", "click", function() {
-          self.sandbox.trigger("play.simple");
+          app.trigger("play.simple");
           return false;
         }).
         delegate("a.insert", "click", function() {
@@ -162,12 +162,12 @@ Simple = (function(s, $, win) {
         delegate(".home", "click", function() {
           return win.location.reload();
         });
-      self.sandbox.
+      app.
         bind("new.simple", function() {
           self.createNew();
         }).
         bind("edit.simple", function() {
-          self.load(self.sandbox.key);
+          self.load(app.key);
         });
       return self;
     },
@@ -187,8 +187,8 @@ Simple = (function(s, $, win) {
       return self;
     },
     display: function(index, value) {
-      var self = this, slideId = "slide_" + index;
-      value = value || self.sandbox.get(index);
+      var self = this, slideId = "slide_" + index, app = self.sandbox;
+      value = value || app.get(index);
       $("div.slide").hide();
       $("[id$=" + slideId +"]").show();
       self.$paginate.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
@@ -197,14 +197,14 @@ Simple = (function(s, $, win) {
       return self;
     },
     insert: function(index, html) {
-      var self = this;
+      var self = this, app = self.sandbox;
       $("<div></div>").
         attr("id", "slide_" + index).
         attr("class", "slide card padding").
         html(markup(html)).
         appendTo(self.$preview).hide();
       $("<a href='#'></a>").html(index + 1).appendTo(self.$paginate);
-      self.sandbox.save(index, html);
+      app.save(index, html);
       self.display(index);
       return self;
     },
@@ -212,9 +212,9 @@ Simple = (function(s, $, win) {
       return this.$selector.toggle();
     },
     load: function(key) {
-      var self = this;
-      self.sandbox.load(key);
-      self.sandbox.all(function(data) {
+      var self = this, app =self.sandbox;
+      app.load(key);
+      app.all(function(data) {
         self.insert(parseInt(data.num, 10), data.markdown);
       });
       self.display(0);
@@ -235,11 +235,11 @@ Simple = (function(s, $, win) {
       this.listen();
     },
     listen: function() {
-      var self = this;
+      var self = this, app = self.sandbox;
       self.$selector.delegate("a.exit", "click", function() {
-        self.sandbox.trigger("stop.simple");
+        app.trigger("stop.simple");
       });
-      self.sandbox.
+      app.
         bind("play.simple", function() {
           self.play();
         }).
@@ -270,29 +270,33 @@ Simple = (function(s, $, win) {
       return self.$selector.toggle();
     },
     play: function() {
-      var self = this;
+      var self = this, app = self.sandbox;
       self.$screen.empty();
-      self.sandbox.all(function(data) {
+      app.all(function(data) {
         $("<div></div>").
           attr("id", "simple" + data.slideId).
           html(markup(data.markdown)).
           appendTo(self.$screen).hide();
       });
       self.$screen.children().addClass("slide").first().cell();
-      self.sandbox.trigger("loaded.simple");
+      app.trigger("loaded.simple");
     },
     next: function() {
-      var $next = this.$screen.children(":visible").hide().next();
+      var self = this,
+          app = self.sandbox,
+          $next = self.$screen.children(":visible").hide().next();
       if ($next.length) $next.cell();
       else {
-        self.sandbox.trigger("stop.simple").trigger("toggle.simple");
+        app.trigger("stop.simple").trigger("toggle.simple");
       }
     },
     prev: function() {
-      var $prev = this.$screen.children(":visible").hide().prev();
+      var self = this,
+          app = self.sandbox,
+          $prev = self.$screen.children(":visible").hide().prev();
       if ($prev.length) $prev.cell();
       else {
-        self.sandbox.trigger("stop.simple").trigger("toggle.simple");
+        app.trigger("stop.simple").trigger("toggle.simple");
       }
     }
   };
@@ -306,13 +310,14 @@ Simple = (function(s, $, win) {
   };
   S.Welcome[pro] = {
     init: function() {
-      var self = this;
+      var self = this,
+      app = self.sandbox;
       self.show();
       self.$selector.
         delegate("a.play", "click", function() {
-          self.sandbox.load($(this).text());
+          app.load($(this).text());
           self.hide();
-          self.sandbox.trigger("edit.simple").trigger("play.simple");
+          app.trigger("edit.simple").trigger("play.simple");
         });
     },
     hide: function() {
@@ -373,8 +378,9 @@ Simple = (function(s, $, win) {
     },
     init: function() {
       var self = this,
+      app = self.sandbox,
       keys = self.keys;
-      self.sandbox.
+      app.
         bind("play.simple", function() {
           self.context = self.SHOW;
         }).
@@ -387,10 +393,10 @@ Simple = (function(s, $, win) {
             case self.EDIT:
               switch (key) {
                 case keys.left:
-                  self.sandbox.trigger("prev.simple");
+                  app.trigger("prev.simple");
                   break;
                 case keys.right:
-                  self.sandbox.trigger("next.simple");
+                  app.trigger("next.simple");
                   break;
                 default:
                   log(key);
@@ -402,14 +408,14 @@ Simple = (function(s, $, win) {
                   log("space");
                   break;
                 case keys.left:
-                  self.sandbox.trigger("prev.simple");
+                  app.trigger("prev.simple");
                   break;
                 case keys.right:
-                  self.sandbox.trigger("next.simple");
+                  app.trigger("next.simple");
                   break;
                 case keys.esc:
-                  self.sandbox.trigger("stop.simple");
-                  self.sandbox.trigger("toggle.simple");
+                  app.trigger("stop.simple");
+                  app.trigger("toggle.simple");
                   break;
                 default:
                   log(key);
