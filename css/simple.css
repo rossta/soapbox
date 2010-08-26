@@ -8,6 +8,7 @@ a:hover {color:#125C00;}
 .left { float:left; }
 .no_margin { margin:0;}
 .relative {position:relative;}
+.home {color:#292CC9;}
 .card {
   height:300px;
   padding:5px;
@@ -61,8 +62,9 @@ textarea {
   bottom: 1em;
   right: 1em;
 }
-#pagination a { padding:2px 8px; background-color: #ccc; float:left;}
-#pagination a.current { background-color: #efefef;}
+#pages a { position:relative; z-index:1;}
+#pages a { padding:2px 8px; background-color: #ccc; float:left;}
+#pages a.current { background-color: #efefef;}
 #welcome .screen { margin-left:2em;}
 #welcome a {display:block; margin:0 0 0.5em;}
 ul{text-align:left;margin: 1em 20%;}
