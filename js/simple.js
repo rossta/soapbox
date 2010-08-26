@@ -123,7 +123,7 @@ Simple = (function(s, $, win) {
     self.$selector  = $(selector);
     self.$preview   = self.$selector.find('#preview');
     self.$textarea  = self.$selector.find('textarea');
-    self.$paginate  = self.$selector.find('#pagination');
+    self.$pages  = self.$selector.find('#pages');
   };
   S.Author[pro] = {
     init: function() {
@@ -155,7 +155,7 @@ Simple = (function(s, $, win) {
           self.createNew();
           return false;
         }).
-        delegate("#pagination a", "click", function() {
+        delegate("#pages a", "click", function() {
           self.display(parseInt($(this).html(), 10) - 1);
           return false;
         }).
@@ -181,7 +181,7 @@ Simple = (function(s, $, win) {
       var self = this, title = prompt("Save New Slideshow As...");
       self.load(title);
       self.$preview.empty();
-      self.$paginate.empty();
+      self.$pages.empty();
       self.insert(0, "# New Slideshow");
       self.show();
       return self;
@@ -191,7 +191,7 @@ Simple = (function(s, $, win) {
       value = value || app.get(index);
       $("div.slide").hide();
       $("[id$=" + slideId +"]").show();
-      self.$paginate.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
+      self.$pages.children().removeClass("current").filter(":eq("+ index+")").addClass("current");
       self.$textarea.attr("name", slideId).val(value);
       self.$textarea.change();
       return self;
@@ -203,7 +203,7 @@ Simple = (function(s, $, win) {
         attr("class", "slide card padding").
         html(markup(html)).
         appendTo(self.$preview).hide();
-      $("<a href='#'></a>").html(index + 1).appendTo(self.$paginate);
+      $("<a href='#'></a>").html(index + 1).appendTo(self.$pages);
       app.save(index, html);
       self.display(index);
       return self;
